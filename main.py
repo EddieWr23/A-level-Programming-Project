@@ -1,5 +1,6 @@
 from pieces import *
 import pygame as p
+import GUI
 
 #CHESS VARIABLES
 p.init()
@@ -155,4 +156,6 @@ def movePiece(oldpos, newpos):
     piece.position = newpos #move piece
     print("MOVE MADE - " + str(piece.symbol + piecetaken + RF(newpos)))
 
-chess()
+if __name__ == '__main__':
+    #if GUI.GUI() == True:
+    chess()
