@@ -58,24 +58,24 @@ def chess():
                     sqSelected = () # deselect
                     playerClicks = []
                     possibleMoves = []
-                else:
+                else: # if the square selected isnt already selected (first or second)
                     sqSelected = (row, col)
                     print(RF((row,col)))
                     playerClicks.append(sqSelected) # append for both first and second clicks
-                    piece = findPiece(sqSelected)
-                    if piece != 0:
-                        possibleMoves = piece.get_legal_moves()
-                    else:
+                    if len(playerClicks) == 2: # if it was the second click
+                        if movePiece(playerClicks[0], playerClicks[1], possibleMoves) == True:
+                            WhiteToMove = not WhiteToMove
+                        playerClicks = []
+                        sqSelected = ()
                         possibleMoves = []
-                        if len(playerClicks) == 1: # if the users first press is an empty square
-                            playerClicks = []
-
-                if len(playerClicks) == 2:
-                    if movePiece(playerClicks[0], playerClicks[1]) == True:
-                        WhiteToMove = not WhiteToMove
-                    playerClicks = []
-                    sqSelected = ()
-                    possibleMoves = []
+                    else:
+                        piece = findPiece(sqSelected)
+                        if piece != 0:
+                            possibleMoves = piece.get_legal_moves()
+                        else: # if the users first press is an empty square
+                            possibleMoves = []
+                            if len(playerClicks) == 1: 
+                                playerClicks = []
 
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_UP:
@@ -143,6 +143,7 @@ def findPiece(position):
             return piece
     return 0
 
+'''
 def movePiece(oldpos, newpos):
     piecetoCapture = findPiece(newpos)
     piece = findPiece(oldpos)
@@ -156,16 +157,18 @@ def movePiece(oldpos, newpos):
     else:
         piece.position = newpos #move piece
         print("MOVE MADE - " + str(piece.symbol + piecetaken + RF(newpos)))
-
 '''
+#'''
 def movePiece(oldpos, newpos, legalMoves):
-    if (oldpos, newpos) in legalMoves:
+    print(oldpos, newpos)
+    print(legalMoves)
+    if (newpos) in legalMoves:
         pieceToCapture = findPiece(newpos)
         if pieceToCapture != 0:
             board.remove(pieceToCapture)
         pieceToMove = findPiece(oldpos)
         pieceToMove.position = (newpos)
-'''
+#'''
 
 
 if __name__ == '__main__':
