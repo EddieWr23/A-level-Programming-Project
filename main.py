@@ -36,7 +36,6 @@ def chess():
     clock = p.time.Clock()
     screen.fill(p.Color("black"))
     running = True
-    WhiteToMove = True
     sqSelected = ()
     playerClicks = []
     possibleMoves = []
@@ -65,7 +64,7 @@ def chess():
                         sqSelected = ()
                         possibleMoves = []
                     else:
-                        piece = findPiece(sqSelected)
+                        piece = pieces.findPiece(sqSelected)
                         if piece != 0:
                             possibleMoves = piece.get_legal_moves()
                         else: # if the users first press is an empty square
@@ -89,7 +88,7 @@ def drawGameState(screen, board, sqSelected,possibleMoves):
     drawPieces(screen, board) # draw pieces on the squares
 
 '''
-Draws the Squares on the board, The top Left Square is always light. Also draws yellow and red squares
+Draws the Squares on the board, The top Left Square is always light. Also draws yellow circles and red squares on square selected and legal moves respectively
 '''
 def drawBoard(screen,sqSelected,possibleMoves):
     colors = [p.Color("white"), p.Color("gray")]
@@ -121,7 +120,7 @@ def getAllLegalMoves(board):
         moves.append[piece.get_legal_moves]
 
 def debugSquare(position):
-    piece = findPiece(position)
+    piece = pieces.findPiece(position)
     if piece != 0:
         rf_moves = []
         moves = piece.get_legal_moves()
@@ -133,39 +132,17 @@ def debugSquare(position):
         print("POSITION - " + str(RF(piece.position)))
         print("number of pseudolegal moves - " + str(len(moves)))
 
-def findPiece(position):
-    for piece in pieces.board:
-        if piece.position == position:
-            return piece
-    return 0
-
-'''
-def movePiece(oldpos, newpos):
-    piecetoCapture = findPiece(newpos)
-    piece = findPiece(oldpos)
-    piecetaken = ""
-    if piecetoCapture != 0: #if there is a piece to capture
-        if piece.color != piecetoCapture.color:
-            board.remove(piecetoCapture) #capture piece
-            piecetaken = "x"
-            piece.position = newpos #move piece
-            print("MOVE MADE - " + str(piece.symbol + piecetaken + RF(newpos)))
-    else:
-        piece.position = newpos #move piece
-        print("MOVE MADE - " + str(piece.symbol + piecetaken + RF(newpos)))
-'''
-#'''
 def movePiece(oldpos, newpos, legalMoves):
     piecetaken = ""
     if (newpos) in legalMoves:
-        pieceToCapture = findPiece(newpos)
+        pieceToCapture = pieces.findPiece(newpos)
         if pieceToCapture != 0:
             pieces.board.remove(pieceToCapture)
             piecetaken = "x"
-        pieceToMove = findPiece(oldpos)
+        pieceToMove = pieces.findPiece(oldpos)
         pieceToMove.position = (newpos)
+        pieces.whiteToMove = not pieces.whiteToMove # changes side to play moves
         print("MOVE MADE - " + str(pieceToMove.symbol + piecetaken + RF(newpos)))
-#'''
 
 
 if __name__ == '__main__':
