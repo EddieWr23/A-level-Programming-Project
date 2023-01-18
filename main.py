@@ -1,4 +1,4 @@
-from pieces import *
+import pieces
 import pygame as p
 import GUI
 
@@ -8,10 +8,6 @@ WIDTH, HEIGHT = 512, 512       #default is 512, 512
 DIMENSION = 8 #chess boards are 8x8
 SQ_SIZE = HEIGHT//DIMENSION
 MAX_FPS = 15 #for animations later on
-board = [Rook((7,0),"White"),Knight((7,1),"White"),Bishop((7,2),"White"),Queen((7,3),"White"),King((7,4),"White"),Bishop((7,5),"White"),Knight((7,6),"White"),Rook((7,7),"White"),
-        Pawn((6,0),"White"),Pawn((6,1),"White"),Pawn((6,2),"White"),Pawn((6,3),"White"),Pawn((6,4),"White"),Pawn((6,5),"White"),Pawn((6,6),"White"),Pawn((6,7),"White"),
-        Rook((0,0),"Black"),Knight((0,1),"Black"),Bishop((0,2),"Black"),Queen((0,3),"Black"),King((0,4),"Black"),Bishop((0,5),"Black"),Knight((0,6),"Black"),Rook((0,7),"Black"),
-        Pawn((1,0),"Black"),Pawn((1,1),"Black"),Pawn((1,2),"Black"),Pawn((1,3),"Black"),Pawn((1,4),"Black"),Pawn((1,5),"Black"),Pawn((1,6),"Black"),Pawn((1,7),"Black")]
 
 redCircle = p.transform.scale(p.image.load("images/red.png"), (64,64))
 yellowCircle = p.transform.scale(p.image.load("images/yellow.png"), (64,64))
@@ -60,7 +56,7 @@ def chess():
                     possibleMoves = []
                 else: # if the square selected isnt already selected (first or second)
                     sqSelected = (row, col)
-                    print(RF((row,col)))
+                    #print(RF((row,col))) # prints the official chess notation for the square to ghelp with debbugging
                     playerClicks.append(sqSelected) # append for both first and second clicks
                     if len(playerClicks) == 2: # if it was the second click
                         if movePiece(playerClicks[0], playerClicks[1], possibleMoves) == True:
@@ -84,7 +80,7 @@ def chess():
                     row = location[1]//SQ_SIZE
                     debugSquare((row, col))
 
-            drawGameState(screen,board,sqSelected,possibleMoves)
+            drawGameState(screen,pieces.board,sqSelected,possibleMoves)
             clock.tick(MAX_FPS)
             p.display.flip()
 
@@ -138,7 +134,7 @@ def debugSquare(position):
         print("number of pseudolegal moves - " + str(len(moves)))
 
 def findPiece(position):
-    for piece in board:
+    for piece in pieces.board:
         if piece.position == position:
             return piece
     return 0
@@ -160,14 +156,15 @@ def movePiece(oldpos, newpos):
 '''
 #'''
 def movePiece(oldpos, newpos, legalMoves):
-    print(oldpos, newpos)
-    print(legalMoves)
+    piecetaken = ""
     if (newpos) in legalMoves:
         pieceToCapture = findPiece(newpos)
         if pieceToCapture != 0:
-            board.remove(pieceToCapture)
+            pieces.board.remove(pieceToCapture)
+            piecetaken = "x"
         pieceToMove = findPiece(oldpos)
         pieceToMove.position = (newpos)
+        print("MOVE MADE - " + str(pieceToMove.symbol + piecetaken + RF(newpos)))
 #'''
 
 
