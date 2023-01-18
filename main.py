@@ -62,15 +62,14 @@ def chess():
                     sqSelected = (row, col)
                     print(RF((row,col)))
                     playerClicks.append(sqSelected) # append for both first and second clicks
-                    pieceFound = False
-                    for piece in board:
-                        if piece.position == (row, col):
-                            possibleMoves = piece.get_legal_moves()
-                            pieceFound = True
-                    if pieceFound == False:
+                    piece = findPiece(sqSelected)
+                    if piece != 0:
+                        possibleMoves = piece.get_legal_moves()
+                    else:
                         possibleMoves = []
-                        if len(playerClicks) == 1:
+                        if len(playerClicks) == 1: # if the users first press is an empty square
                             playerClicks = []
+
                 if len(playerClicks) == 2:
                     if movePiece(playerClicks[0], playerClicks[1]) == True:
                         WhiteToMove = not WhiteToMove
@@ -147,14 +146,27 @@ def findPiece(position):
 def movePiece(oldpos, newpos):
     piecetoCapture = findPiece(newpos)
     piece = findPiece(oldpos)
+    piecetaken = ""
     if piecetoCapture != 0: #if there is a piece to capture
         if piece.color != piecetoCapture.color:
             board.remove(piecetoCapture) #capture piece
             piecetaken = "x"
+            piece.position = newpos #move piece
+            print("MOVE MADE - " + str(piece.symbol + piecetaken + RF(newpos)))
     else:
-        piecetaken = ""
-    piece.position = newpos #move piece
-    print("MOVE MADE - " + str(piece.symbol + piecetaken + RF(newpos)))
+        piece.position = newpos #move piece
+        print("MOVE MADE - " + str(piece.symbol + piecetaken + RF(newpos)))
+
+'''
+def movePiece(oldpos, newpos, legalMoves):
+    if (oldpos, newpos) in legalMoves:
+        pieceToCapture = findPiece(newpos)
+        if pieceToCapture != 0:
+            board.remove(pieceToCapture)
+        pieceToMove = findPiece(oldpos)
+        pieceToMove.position = (newpos)
+'''
+
 
 if __name__ == '__main__':
     #if GUI.GUI() == True:
