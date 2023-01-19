@@ -4,13 +4,15 @@ import GUI
 
 #CHESS VARIABLES
 p.init()
-WIDTH, HEIGHT = 512, 512       #default is 512, 512
+WIDTH, HEIGHT = 768, 512 #default is 512, 512
 DIMENSION = 8 #chess boards are 8x8
 SQ_SIZE = HEIGHT//DIMENSION
 MAX_FPS = 15 #for animations later on
 
 redCircle = p.transform.scale(p.image.load("images/red.png"), (64,64))
 yellowCircle = p.transform.scale(p.image.load("images/yellow.png"), (64,64))
+
+playedMoves = []
 
 '''
 Functions for ranks and files
@@ -78,6 +80,8 @@ def chess():
                     col = location[0]//SQ_SIZE
                     row = location[1]//SQ_SIZE
                     debugSquare((row, col))
+                if e.key == p.K_DOWN:
+                    debugGame()
 
             drawGameState(screen,pieces.board,sqSelected,possibleMoves)
             clock.tick(MAX_FPS)
@@ -124,13 +128,28 @@ def debugSquare(position):
     if piece != 0:
         rf_moves = []
         moves = piece.get_legal_moves()
-        print(moves)
+        #print(moves)
         for move in (moves):
             rf_moves.append(RF(move))
-        print(rf_moves)
         print(piece.__class__)
         print("POSITION - " + str(RF(piece.position)))
-        print("number of pseudolegal moves - " + str(len(moves)))
+        print("number of pseudolegal moves - " + str(len(moves)) + ":")
+        print(rf_moves)
+
+def debugGame():
+    print("-----DEBUGGING GAME-----")
+    # moves made in this game
+    print("Total Moves Made = " + len(playedMoves) + ":")
+    print(playedMoves)
+    #all pseudolegal moves in this position
+    allLegalMoves = []
+    for piece in pieces.board:
+        moves = piece.get_legal_moves()
+        for move in moves:
+            allLegalMoves.append(move)
+    print("Total Number of Legal Moves in this Position = " + len(allLegalMoves))
+    print("--------------------")
+
 
 def movePiece(oldpos, newpos, legalMoves):
     piecetaken = ""
@@ -141,8 +160,10 @@ def movePiece(oldpos, newpos, legalMoves):
             piecetaken = "x"
         pieceToMove = pieces.findPiece(oldpos)
         pieceToMove.position = (newpos)
-        pieces.whiteToMove = not pieces.whiteToMove # changes side to play moves
         print("MOVE MADE - " + str(pieceToMove.symbol + piecetaken + RF(newpos)))
+        playedMoves.append((oldpos, newpos))
+        pieces.whiteToMove = not pieces.whiteToMove # changes side to play moves
+        
 
 
 if __name__ == '__main__':

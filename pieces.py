@@ -151,22 +151,18 @@ class Knight(Piece):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
       return []
     x, y = self.position
-    temp = []
+    knightDirections = [(x + 2, y + 1),(x + 2, y - 1),(x - 2, y + 1),(x - 2, y - 1),(x + 1, y + 2),(x + 1, y - 2),(x - 1, y + 2),(x - 1, y - 2)]
     moves = []
     
-    # add all possible "L" shaped moves
-    temp.append((x + 2, y + 1))
-    temp.append((x + 2, y - 1))
-    temp.append((x - 2, y + 1))
-    temp.append((x - 2, y - 1))
-    temp.append((x + 1, y + 2))
-    temp.append((x + 1, y - 2))
-    temp.append((x - 1, y + 2))
-    temp.append((x - 1, y - 2))
-    
-    for move in temp: #check if they are on the board and append them
+    for move in knightDirections: #check if they are on the board and append them
       if move[0] < 8 and move[0] > -1 and move[1] < 8 and move[1] > -1:
-        moves.append(move)
+        piece = findPiece(move)
+        if piece == 0: # if square is empty
+          moves.append(move)
+        else: #if square has a piece on it
+          if piece.color != self.color:
+            moves.append(move)
+
 
     return moves
 '''
