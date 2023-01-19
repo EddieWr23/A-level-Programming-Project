@@ -182,38 +182,60 @@ class Bishop(Piece):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
       return []
     x, y = self.position
-    temp = []
     moves = []
 
-    # add all possible moves along the diagonals
-    i = x
-    j = y
-    while i < 8 and j < 8:  # move along top right diagonal
-        temp.append((i, j))
-        i += 1
-        j += 1
-    i = x
-    j = y
-    while i < 8 and j > -1: # down and right diagonal
-        temp.append((i, j))
-        i += 1
-        j -= 1
-    i = x
-    j = y
-    while i > -1 and j < 8: # up and left diagonal
-        temp.append((i, j))
-        i -= 1
-        j += 1
-    i = x
-    j = y
-    while i > -1 and j > -1: #down and left diagonal
-        temp.append((i, j))
-        i -= 1
-        j -= 1
+    i = 1
+    while (x + i) < 8 and  (y + i) < 8: #DOWN AND RIGHT
+      piece = findPiece(((x+i), (y+i)))
+      if piece == 0: #if square is empty
+        moves.append(((x+i), (y+i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x+i), (y+i)))
+          break
+      i = i+1
 
-    for move in temp:
-      if move != self.position:
-        moves.append(move)
+    i = 1 
+    while (x - i) >= 0 and (y + i) < 8: #UP AND RIGHT
+      piece = findPiece(((x-i), (y+i)))
+      if piece == 0: #if square is empty
+        moves.append(((x-i), (y+i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x-i), (y+i)))
+          break
+      i = i+1
+
+    i = 1 
+    while (x + i) < 8 and (y - i) >= 0: # DOWN AND LEFT
+      piece = findPiece(((x+i), (y-i)))
+      if piece == 0: #if square is empty
+        moves.append(((x+i), (y-i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x+i), (y-i)))
+          break
+      i = i+1
+
+    i = 1 
+    while (x - i) >= 0 and (y - i) >= 0: # UP AND LEFT
+      piece = findPiece(((x-i), (y-i)))
+      if piece == 0: #if square is empty
+        moves.append(((x-i), (y-i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x-i), (y-i)))
+          break
+      i = i+1
+    
     return moves
 '''
 QUEEN ##########################################################################################
@@ -232,44 +254,113 @@ class Queen(Piece):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
       return []
     x, y = self.position
-    temp = []
     moves = []
+    i = 1 # RIGHT
+    while (i + x) < 8:
+      piece = findPiece(((x+i), y))
+      if piece == 0: #if square is empty
+        moves.append(((x+i), y))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x+i), y))
+          break
+      i = i+1
 
-    # add all possible moves along the row and column
-    for i in range(8):
-      temp.append((x, i))
-      temp.append((i, y))
+    i = 1 # LEFT
+    while (x - i) >= 0:
+      piece = findPiece(((x-i), y))
+      if piece == 0: #if square is empty
+        moves.append(((x-i), y))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x-i), y))
+          break
+      i = i+1
 
-    # add all possible moves along the diagonals
-    i = x
-    j = y
-    while i < 8 and j < 8:  # move along top right diagonal
-        temp.append((i, j))
-        i += 1
-        j += 1
-    i = x
-    j = y
-    while i < 8 and j > -1: # down and right diagonal
-        temp.append((i, j))
-        i += 1
-        j -= 1
-    i = x
-    j = y
-    while i > -1 and j < 8: # up and left diagonal
-        temp.append((i, j))
-        i -= 1
-        j += 1
-    i = x
-    j = y
-    while i > -1 and j > -1: #down and left diagonal
-        temp.append((i, j))
-        i -= 1
-        j -= 1
+    i = 1 # DOWN
+    while (y + i) < 8:
+      piece = findPiece((x, (y+i)))
+      if piece == 0: #if square is empty
+        moves.append((x, (y+i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append((x, (y+i)))
+          break
+      i = i+1
 
-    for move in temp:
-      if move != self.position:
-        moves.append(move)
+    i = 1 # UP
+    while (y - i) >= 0:
+      piece = findPiece((x, (y-i)))
+      if piece == 0: #if square is empty
+        moves.append((x, (y-i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append((x, (y-i)))
+          break
+      i = i+1
+    
+    i = 1
+    while (x + i) < 8 and  (y + i) < 8: #DOWN AND RIGHT
+      piece = findPiece(((x+i), (y+i)))
+      if piece == 0: #if square is empty
+        moves.append(((x+i), (y+i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x+i), (y+i)))
+          break
+      i = i+1
+
+    i = 1 
+    while (x - i) >= 0 and (y + i) < 8: #UP AND RIGHT
+      piece = findPiece(((x-i), (y+i)))
+      if piece == 0: #if square is empty
+        moves.append(((x-i), (y+i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x-i), (y+i)))
+          break
+      i = i+1
+
+    i = 1 
+    while (x + i) < 8 and (y - i) >= 0: # DOWN AND LEFT
+      piece = findPiece(((x+i), (y-i)))
+      if piece == 0: #if square is empty
+        moves.append(((x+i), (y-i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x+i), (y-i)))
+          break
+      i = i+1
+
+    i = 1 
+    while (x - i) >= 0 and (y - i) >= 0: # UP AND LEFT
+      piece = findPiece(((x-i), (y-i)))
+      if piece == 0: #if square is empty
+        moves.append(((x-i), (y-i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x-i), (y-i)))
+          break
+      i = i+1
+    
     return moves
+
 '''
 KING ##########################################################################################
 '''
@@ -287,21 +378,16 @@ class King(Piece):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
       return []
     x, y = self.position
-    temp = []
+    kingDirections = [(x - 1, y - 1),(x + 1, y - 1),(x - 1, y + 1),(x + 1, y + 1),(x, y + 1),(x, y - 1),(x + 1, y),(x - 1, y)]
     moves = []
-    
-    # add all possible "L" shaped moves
-    temp.append((x - 1, y - 1))
-    temp.append((x + 1, y - 1))
-    temp.append((x - 1, y + 1))
-    temp.append((x + 1, y + 1))
-    temp.append((x, y + 1))
-    temp.append((x, y - 1))
-    temp.append((x + 1, y))
-    temp.append((x - 1, y))
 
-    for move in temp: #check if they are on the board and append them
-        if move[0] < 8 and move[0] > -1 and move[1] < 8 and move[1] > -1:
+    for move in kingDirections: #check if they are on the board and append them
+      if move[0] < 8 and move[0] > -1 and move[1] < 8 and move[1] > -1:
+        piece = findPiece(move)
+        if piece == 0: # if square is empty
+          moves.append(move)
+        else: #if square has a piece on it
+          if piece.color != self.color:
             moves.append(move)
 
     return moves

@@ -132,14 +132,14 @@ def debugSquare(position):
         for move in (moves):
             rf_moves.append(RF(move))
         print(piece.__class__)
-        print("POSITION - " + str(RF(piece.position)))
+        print("POSITION - " + str(RF(piece.position)) + " / " + str(piece.position))
         print("number of pseudolegal moves - " + str(len(moves)) + ":")
         print(rf_moves)
 
 def debugGame():
     print("-----DEBUGGING GAME-----")
     # moves made in this game
-    print("Total Moves Made = " + len(playedMoves) + ":")
+    print("Total Moves Made = " + str(len(playedMoves)) + ":")
     print(playedMoves)
     #all pseudolegal moves in this position
     allLegalMoves = []
@@ -147,7 +147,7 @@ def debugGame():
         moves = piece.get_legal_moves()
         for move in moves:
             allLegalMoves.append(move)
-    print("Total Number of Legal Moves in this Position = " + len(allLegalMoves))
+    print("Total Number of Legal Moves in this Position = " + str(len(allLegalMoves)))
     print("--------------------")
 
 
