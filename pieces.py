@@ -79,17 +79,59 @@ class Rook(Piece):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
       return []
     x, y = self.position
-    temp = []
     moves = []
-    
-    # add all possible moves along the row and column
-    for i in range(8):
-      temp.append((x, i))
-      temp.append((i, y))
 
-    for move in temp:
-      if move != self.position:
-        moves.append(move)
+    i = 1 # RIGHT
+    while (i + x) < 8:
+      piece = findPiece(((x+i), y))
+      if piece == 0: #if square is empty
+        moves.append(((x+i), y))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x+i), y))
+          break
+      i = i+1
+
+    i = 1 # LEFT
+    while (x - i) >= 0:
+      piece = findPiece(((x-i), y))
+      if piece == 0: #if square is empty
+        moves.append(((x-i), y))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append(((x-i), y))
+          break
+      i = i+1
+
+    i = 1 # DOWN
+    while (y + i) < 8:
+      piece = findPiece((x, (y+i)))
+      if piece == 0: #if square is empty
+        moves.append((x, (y+i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append((x, (y+i)))
+          break
+      i = i+1
+
+    i = 1 # UP
+    while (y - i) >= 0:
+      piece = findPiece((x, (y-i)))
+      if piece == 0: #if square is empty
+        moves.append((x, (y-i)))
+      else: #if the square is empty
+        if piece.color == self.color:
+          break
+        else:
+          moves.append((x, (y-i)))
+          break
+      i = i+1
     
     return moves
 '''
