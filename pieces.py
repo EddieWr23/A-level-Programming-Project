@@ -33,15 +33,33 @@ class Pawn(Piece):
     
     # white pawns can only move forward
     if self.color == 'White':
-      moves.append((y - 1, x))
-      if y == 6:  # allow pawns to move two squares on their first move
+      if findPiece(((y-1), x)) == 0: # if the square in front is not occupied
+        moves.append((y - 1, x))
+      if y == 6 and findPiece(((y-2), x)) == 0:  # allow pawns to move two squares on their first move provided it is empty
         moves.append((y - 2, x))
+      piece = findPiece(((y-1), x+1))
+      if piece != 0: #if there is a piece diagonally
+        if piece.color == "Black":
+          moves.append(piece.position)
+      piece = findPiece(((y-1), x-1))
+      if piece != 0: #if there is a piece diagonally
+        if piece.color == "Black":
+          moves.append(piece.position)
     
     # black pawns can only move backward
     elif self.color == 'Black':
-      moves.append((y + 1, x))
-      if y == 1:  # allow pawns to move two squares on their first move
-        moves.append((y + 2, x))
+      if findPiece(((y+1), x)) == 0: # if the square in front is not occupied
+        moves.append((y+1, x))
+      if y == 1 and findPiece(((y+2), x)) == 0:  # allow pawns to move two squares on their first move provided it is empty
+        moves.append((y+2, x))
+      piece = findPiece(((y+1), x+1))
+      if piece != 0: #if there is a piece diagonally
+        if piece.color == "White":
+          moves.append(piece.position)
+      piece = findPiece(((y+1), x-1))
+      if piece != 0: #if there is a piece diagonally
+        if piece.color == "White":
+          moves.append(piece.position)
     
     return moves
 '''
