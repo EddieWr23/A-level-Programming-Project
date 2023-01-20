@@ -142,11 +142,7 @@ def debugGame():
     print("Total Moves Made = " + str(len(playedMoves)) + ":")
     print(playedMoves)
     #all pseudolegal moves in this position
-    allLegalMoves = []
-    for piece in pieces.board:
-        moves = piece.get_legal_moves()
-        for move in moves:
-            allLegalMoves.append(move)
+    allLegalMoves = getAllLegalMoves()
     print("Total Number of Legal Moves in this Position = " + str(len(allLegalMoves)))
     print("--------------------")
 
@@ -161,8 +157,31 @@ def movePiece(oldpos, newpos, legalMoves):
         pieceToMove = pieces.findPiece(oldpos)
         pieceToMove.position = (newpos)
         print("MOVE MADE - " + str(pieceToMove.symbol + piecetaken + RF(newpos)))
+        checkForChecks()
         playedMoves.append((oldpos, newpos))
         pieces.whiteToMove = not pieces.whiteToMove # changes side to play moves
+
+def getAllLegalMoves():
+    allLegalMoves = []
+    for piece in pieces.board:
+        moves = piece.get_legal_moves()
+        for move in moves:
+            allLegalMoves.append(move)
+    return allLegalMoves
+
+def checkForChecks():
+    allLegalMoves = getAllLegalMoves()
+    if pieces.whiteToMove == True:
+        for move in allLegalMoves:
+            piece = pieces.findPiece(move)
+            if piece != 0 and piece.symbol == "K" and piece.color == "Black":
+                print("BLACK IN CHECK")
+    if pieces.whiteToMove == False:
+        for move in allLegalMoves:
+            piece = pieces.findPiece(move)
+            if piece != 0 and piece.symbol == "K" and piece.color == "White":
+                print("WHITE IN CHECK")
+
         
 
 

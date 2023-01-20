@@ -7,8 +7,9 @@ class Piece:
     self.color = color
   
   # method to get the legal moves for a piece
-  def get_legal_moves(self):
-    pass
+  def checkForSelfChecks(moves):
+    if whiteToMove == True:
+      pass
   
   def move_piece(self):
     pass
@@ -60,6 +61,8 @@ class Pawn(Piece):
       if piece != 0: #if there is a piece diagonally
         if piece.color == "White":
           moves.append(piece.position)
+
+    
     
     return moves
 '''
