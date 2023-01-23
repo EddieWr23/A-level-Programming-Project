@@ -144,6 +144,13 @@ def debugGame():
     #all pseudolegal moves in this position
     allLegalMoves = getAllLegalMoves()
     print("Total Number of Legal Moves in this Position = " + str(len(allLegalMoves)))
+    whiteMaterial, blackMaterial, materialDifference = calculateMaterial()
+    print("White Material = " + str(whiteMaterial))
+    print("Black Material = " + str(blackMaterial))
+    if materialDifference > 0:
+        print("Material Difference = +" + str(materialDifference))
+    else:
+        print("Material Difference = " + str(materialDifference))
     print("--------------------")
 
 
@@ -197,6 +204,18 @@ def checkForPromotes():
                     pieces.board.append(pieces.Bishop(piece.position, piece.color))
                 elif chosenPromote == "Knight":
                     pieces.board.append(pieces.Knight(piece.position, piece.color))
+
+def calculateMaterial():
+    whiteMaterial, blackMaterial = 0, 0
+    for piece in pieces.board:
+        if piece.color == "Black":
+            blackMaterial = blackMaterial + piece.value
+        else:
+            whiteMaterial = whiteMaterial + piece.value
+    
+    materialDifference = whiteMaterial - blackMaterial
+    
+    return whiteMaterial, blackMaterial, materialDifference
 
 
         
