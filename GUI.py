@@ -7,27 +7,29 @@ sg.Window._move_all_windows = True
 
 Playing = False
 
+
+
+def title_bar(title, text_color, background_color):
+    """
+    Creates a "row" that can be added to a layout. This row looks like a titlebar
+    :param title: The "title" to show in the titlebar
+    :type title: str
+    :param text_color: Text color for titlebar
+    :type text_color: str
+    :param background_color: Background color for titlebar
+    :type background_color: str
+    :return: A list of elements (i.e. a "row" for a layout)
+    :rtype: List[sg.Element]
+    """
+    bc = background_color
+    tc = text_color
+    font = 'Helvetica 12'
+
+    return [sg.Col([[sg.T(title, text_color=tc, background_color=bc, font=font, grab=True)]], pad=(0, 0), background_color=bc),
+            sg.Col([[sg.Text('❎', text_color=tc, background_color=bc, font=font, enable_events=True, key='Exit')]], element_justification='r', key='-C-', grab=True,
+                pad=(0, 0), background_color=bc)]
+
 def GUI():
-
-    def title_bar(title, text_color, background_color):
-        """
-        Creates a "row" that can be added to a layout. This row looks like a titlebar
-        :param title: The "title" to show in the titlebar
-        :type title: str
-        :param text_color: Text color for titlebar
-        :type text_color: str
-        :param background_color: Background color for titlebar
-        :type background_color: str
-        :return: A list of elements (i.e. a "row" for a layout)
-        :rtype: List[sg.Element]
-        """
-        bc = background_color
-        tc = text_color
-        font = 'Helvetica 12'
-
-        return [sg.Col([[sg.T(title, text_color=tc, background_color=bc, font=font, grab=True)]], pad=(0, 0), background_color=bc),
-                sg.Col([[sg.Text('❎', text_color=tc, background_color=bc, font=font, enable_events=True, key='Exit')]], element_justification='r', key='-C-', grab=True,
-                    pad=(0, 0), background_color=bc)]
 
     def login():
 
@@ -272,6 +274,45 @@ def GUI():
         top_window.close()
         window_background.close()
 
-
     login()
     return Playing
+
+'''
+CHOOSING A PROMOTION ---------------------------------------------------------
+'''
+
+
+def choosePromote(color):
+        if color == "Black":
+            column_to_be_centered = [
+                [sg.Text('Choose a Promotion')],
+                [sg.Button('Queen'), sg.Image(r'images/bQ.png'), sg.Button('Knight'), sg.Image(r'images/bN.png')],
+                [sg.Button('Rook'), sg.Image(r'images/bR.png'), sg.Button('Bishop'), sg.Image(r'images/bB.png')]
+            ]
+        else:
+            column_to_be_centered = [
+                [sg.Text('Choose a Promotion')],
+                [sg.Button('Queen'), sg.Image(r'images/wQ.png'), sg.Button('Knight'), sg.Image(r'images/wN.png')],
+                [sg.Button('Rook'), sg.Image(r'images/wR.png'), sg.Button('Bishop'), sg.Image(r'images/wB.png')]
+            ]
+
+        layout = [
+            [
+                [sg.VPush()],
+                [sg.Push(), sg.Column(column_to_be_centered,element_justification='c'), sg.Push()],
+                [sg.VPush()]
+            ]
+        ]
+
+        top_window = sg.Window('Choose a Promotion', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
+
+        # window_background.send_to_back()
+        # top_window.bring_to_front()
+
+        while True:
+            window, event, values = sg.read_all_windows()
+
+            if event != 'Exit':
+                top_window.close()
+                return event
+

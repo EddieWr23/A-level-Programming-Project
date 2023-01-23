@@ -158,6 +158,7 @@ def movePiece(oldpos, newpos, legalMoves):
         pieceToMove.position = (newpos)
         print("MOVE MADE - " + str(pieceToMove.symbol + piecetaken + RF(newpos)))
         checkForChecks()
+        checkForPromotes()
         playedMoves.append((oldpos, newpos))
         pieces.whiteToMove = not pieces.whiteToMove # changes side to play moves
 
@@ -181,6 +182,22 @@ def checkForChecks():
             piece = pieces.findPiece(move)
             if piece != 0 and piece.symbol == "K" and piece.color == "White":
                 print("WHITE IN CHECK")
+
+def checkForPromotes():
+    for piece in pieces.board:
+        if piece.symbol == "":
+            if piece.position[0] == 0 or piece.position[0] == 7:
+                chosenPromote = GUI.choosePromote(piece.color)
+                pieces.board.remove(piece)
+                if chosenPromote == "Queen":
+                    pieces.board.append(pieces.Queen(piece.position, piece.color))
+                elif chosenPromote == "Rook":
+                    pieces.board.append(pieces.Rook(piece.position, piece.color))
+                elif chosenPromote == "Bishop":
+                    pieces.board.append(pieces.Bishop(piece.position, piece.color))
+                elif chosenPromote == "Knight":
+                    pieces.board.append(pieces.Knight(piece.position, piece.color))
+
 
         
 
