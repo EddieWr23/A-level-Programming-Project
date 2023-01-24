@@ -1,13 +1,25 @@
 import pieces
 import pygame as p
 import GUI
+import random
 
 #CHESS VARIABLES
 p.init()
-WIDTH, HEIGHT = 768, 512 #default is 512, 512
+WIDTH, HEIGHT = 512, 512 #default is 512, 512
 DIMENSION = 8 #chess boards are 8x8
 SQ_SIZE = HEIGHT//DIMENSION
 MAX_FPS = 15 #for animations later on
+THEME = 3
+
+if THEME == 1: # Black and White
+    lightSquareColor = p.Color(255,255,255)
+    darkSquareColor = p.Color("gray")
+elif THEME == 2: # Green and beige
+    lightSquareColor = p.Color(215,255,185)
+    darkSquareColor = p.Color(95,135,0)
+elif THEME == 3: # brown and beige
+    lightSquareColor = p.Color(215,255,185)
+    darkSquareColor = p.Color(175,95,0)
 
 redCircle = p.transform.scale(p.image.load("images/red.png"), (64,64))
 yellowCircle = p.transform.scale(p.image.load("images/yellow.png"), (64,64))
@@ -31,12 +43,13 @@ def RF(position):
 The main chess program
 '''
 def chess():
-    screen = p.display.set_mode((WIDTH, HEIGHT))
+    screen = p.display.set_mode((WIDTH*1.5, HEIGHT))
     p.display.set_caption("Eddie's Chess Program")
     Icon = p.image.load(r"images/bK.png")
     p.display.set_icon(Icon)
     clock = p.time.Clock()
     screen.fill(p.Color("black"))
+    global running
     running = True
     sqSelected = ()
     playerClicks = []
@@ -60,11 +73,12 @@ def chess():
                     #print(RF((row,col))) # prints the official chess notation for the square to ghelp with debbugging
                     playerClicks.append(sqSelected) # append for both first and second clicks
                     if len(playerClicks) == 2: # if it was the second click
-                        if movePiece(playerClicks[0], playerClicks[1], possibleMoves) == True:
-                            WhiteToMove = not WhiteToMove
+                        if movePiece(playerClicks[0], playerClicks[1]) == True:
+                            AI_makeRandomMove()
                         playerClicks = []
                         sqSelected = ()
                         possibleMoves = []
+                        
                     else:
                         piece = pieces.findPiece(sqSelected)
                         if piece != 0:
@@ -95,7 +109,7 @@ def drawGameState(screen, board, sqSelected,possibleMoves):
 Draws the Squares on the board, The top Left Square is always light. Also draws yellow circles and red squares on square selected and legal moves respectively
 '''
 def drawBoard(screen,sqSelected,possibleMoves):
-    colors = [p.Color("white"), p.Color("gray")]
+    colors = [lightSquareColor, darkSquareColor] # light squares, dark squares respectively
     for row in range(DIMENSION):
         for col in range(DIMENSION):
             color = colors[(row+col)%2]
@@ -154,13 +168,19 @@ def debugGame():
     print("--------------------")
 
 
-def movePiece(oldpos, newpos, legalMoves):
+def movePiece(oldpos, newpos):
     piecetaken = ""
+    pieceToMove = pieces.findPiece(oldpos)
+    legalMoves = pieceToMove.get_legal_moves()
     if (newpos) in legalMoves:
         pieceToCapture = pieces.findPiece(newpos)
         if pieceToCapture != 0:
             pieces.board.remove(pieceToCapture)
             piecetaken = "x"
+            if pieceToCapture.symbol == "K":
+                global running
+                running = False
+                GUI.kingCaptured(pieceToCapture.color)
         pieceToMove = pieces.findPiece(oldpos)
         pieceToMove.position = (newpos)
         print("MOVE MADE - " + str(pieceToMove.symbol + piecetaken + RF(newpos)))
@@ -169,12 +189,14 @@ def movePiece(oldpos, newpos, legalMoves):
         playedMoves.append((oldpos, newpos))
         pieces.whiteToMove = not pieces.whiteToMove # changes side to play moves
 
+        return True
+
 def getAllLegalMoves():
     allLegalMoves = []
     for piece in pieces.board:
         moves = piece.get_legal_moves()
         for move in moves:
-            allLegalMoves.append(move)
+            allLegalMoves.append(((piece.position),(move)))
     return allLegalMoves
 
 def checkForChecks():
@@ -212,10 +234,15 @@ def calculateMaterial():
             blackMaterial = blackMaterial + piece.value
         else:
             whiteMaterial = whiteMaterial + piece.value
-    
     materialDifference = whiteMaterial - blackMaterial
-    
     return whiteMaterial, blackMaterial, materialDifference
+
+def AI_makeRandomMove():
+    allLegalMoves = getAllLegalMoves()
+    print(allLegalMoves)
+    moveToMake = random.choice(allLegalMoves)
+    print(str(moveToMake))
+    movePiece(moveToMake[0], moveToMake[1])
 
 
         

@@ -306,9 +306,6 @@ def choosePromote(color):
 
         top_window = sg.Window('Choose a Promotion', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
 
-        # window_background.send_to_back()
-        # top_window.bring_to_front()
-
         while True:
             window, event, values = sg.read_all_windows()
 
@@ -316,3 +313,8 @@ def choosePromote(color):
                 top_window.close()
                 return event
 
+def kingCaptured(color):
+    if color == "Black":
+        sg.popup("White Wins!")
+    else:
+        sg.popup("Black Wins!")
