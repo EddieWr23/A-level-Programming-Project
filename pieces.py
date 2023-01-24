@@ -378,7 +378,7 @@ class King(Piece):
   def __init__(self, position, color):
     super().__init__(position, color)
     self.symbol = "K"
-    self.value = 0
+    self.value = 100
     if color == "White":
       self.image = p.transform.scale(p.image.load("images/wK.png"), (64,64))
     else:

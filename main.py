@@ -2,6 +2,7 @@ import pieces
 import pygame as p
 import GUI
 import random
+import threading
 
 #CHESS VARIABLES
 p.init()
@@ -9,7 +10,7 @@ WIDTH, HEIGHT = 512, 512 #default is 512, 512
 DIMENSION = 8 #chess boards are 8x8
 SQ_SIZE = HEIGHT//DIMENSION
 MAX_FPS = 15 #for animations later on
-THEME = 2
+THEME = 3
 
 if THEME == 1: # Black and White
     lightSquareColor = p.Color(255,255,255)
@@ -232,9 +233,9 @@ def calculateMaterial():
     whiteMaterial, blackMaterial = 0, 0
     for piece in pieces.board:
         if piece.color == "Black":
-            blackMaterial = blackMaterial + piece.value
+            blackMaterial = blackMaterial + piece.value - 100
         else:
-            whiteMaterial = whiteMaterial + piece.value
+            whiteMaterial = whiteMaterial + piece.value - 100
     materialDifference = whiteMaterial - blackMaterial
     return whiteMaterial, blackMaterial, materialDifference
 
@@ -259,13 +260,36 @@ def AI_makeMaterialMove():
     except:
         AI_makeRandomMove()
         print("randommove")
-            
 
+def chessTimer(color, counter):
+    screen = p.display.set_mode((128, 64))
+    clock = p.time.Clock()
 
+    text = color + " - " + str(counter).rjust(3)
+    p.time.set_timer(p.USEREVENT, 1000)
+    font = p.font.SysFont('Century Gothic', 24)
 
-        
+    run = True
+    while run:
+        for e in p.event.get():
+            if e.type == p.USEREVENT: 
+                counter -= 1
+                text = color + " - " + str(counter).rjust(3) if counter > 0 else "Time's up!"
+            if e.type == p.QUIT: 
+                run = False
+
+        screen.fill((255, 255, 255))
+        screen.blit(font.render(text, True, (0, 0, 0)), (32, 48))
+        p.display.flip()
+        clock.tick(60)
+
 
 
 if __name__ == '__main__':
-    #if GUI.GUI() == True:
-    chess()
+    if GUI.GUI() == True:
+        chess()
+        #t_chess = threading.Thread(target=chess)
+        #t_clock = threading.Thread(target=chessTimer, args=("White",10,))
+        #t_chess.start()
+        #t_chess.join()
+    #t_clock.start()
