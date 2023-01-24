@@ -74,7 +74,8 @@ def chess():
                     playerClicks.append(sqSelected) # append for both first and second clicks
                     if len(playerClicks) == 2: # if it was the second click
                         if movePiece(playerClicks[0], playerClicks[1]) == True:
-                            AI_makeRandomMove()
+                            #AI_makeRandomMove()
+                            AI_makeMaterialMove()
                         playerClicks = []
                         sqSelected = ()
                         possibleMoves = []
@@ -239,10 +240,27 @@ def calculateMaterial():
 
 def AI_makeRandomMove():
     allLegalMoves = getAllLegalMoves()
-    print(allLegalMoves)
     moveToMake = random.choice(allLegalMoves)
-    print(str(moveToMake))
     movePiece(moveToMake[0], moveToMake[1])
+
+def AI_makeMaterialMove():
+    allLegalMoves = getAllLegalMoves()
+    bestMoveMaterial = -100
+    for move in allLegalMoves:
+        pieceToMove = pieces.findPiece(move[0])
+        pieceToCapture = pieces.findPiece(move[1])
+        if pieceToCapture != 0:
+            materialExchange = pieceToCapture.value - pieceToMove.value
+            if materialExchange > bestMoveMaterial and materialExchange > 0:
+                bestMove, bestMoveMaterial = move, materialExchange
+    try:
+        movePiece(bestMove[0], bestMove[1])
+        print("materialmove")
+    except:
+        AI_makeRandomMove()
+        print("randommove")
+            
+
 
 
         
