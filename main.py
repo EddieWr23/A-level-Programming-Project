@@ -9,7 +9,7 @@ WIDTH, HEIGHT = 512, 512 #default is 512, 512
 DIMENSION = 8 #chess boards are 8x8
 SQ_SIZE = HEIGHT//DIMENSION
 MAX_FPS = 15 #for animations later on
-THEME = 3
+THEME = 2
 
 if THEME == 1: # Black and White
     lightSquareColor = p.Color(255,255,255)
