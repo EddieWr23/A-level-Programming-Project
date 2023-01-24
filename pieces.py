@@ -5,6 +5,7 @@ class Piece:
   def __init__(self, position, color):
     self.position = position
     self.color = color
+    self.movesMade = []
   
   # method to get the legal moves for a piece
   def checkForSelfChecks(moves):

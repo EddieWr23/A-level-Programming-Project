@@ -40,6 +40,14 @@ def file(num):
 def RF(position):
     return(str(file(position[1])) + str(rank(position[0])))
 
+def undoRF(position):
+    position = list(position)
+    files = {"a":0, "b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
+    filenum = files[position[0]]
+    ranknum = 8 - int(position[1])
+    return (ranknum , filenum)
+
+
 '''
 The main chess program
 '''
@@ -173,10 +181,10 @@ def debugGame():
 def movePiece(oldpos, newpos):
     piecetaken = ""
     pieceToMove = pieces.findPiece(oldpos)
+    pieceToCapture = pieces.findPiece(newpos)
     legalMoves = pieceToMove.get_legal_moves()
-    if (newpos) in legalMoves:
-        pieceToCapture = pieces.findPiece(newpos)
-        if pieceToCapture != 0:
+    if (newpos) in legalMoves: # if the move is 'legal'
+        if pieceToCapture != 0: # if there is a piece to capture (not an empty square)
             pieces.board.remove(pieceToCapture)
             piecetaken = "x"
             if pieceToCapture.symbol == "K":
@@ -283,11 +291,9 @@ def chessTimer(color, counter):
         p.display.flip()
         clock.tick(60)
 
-
-
 if __name__ == '__main__':
-    if GUI.GUI() == True:
-        chess()
+    #if GUI.GUI() == True:
+    chess()
         #t_chess = threading.Thread(target=chess)
         #t_clock = threading.Thread(target=chessTimer, args=("White",10,))
         #t_chess.start()
