@@ -5,6 +5,7 @@ class Piece:
   def __init__(self, position, color):
     self.position = position
     self.color = color
+    self.movesMade = 0
   
   # method to get the legal moves for a piece
   def checkForSelfChecks(moves):
@@ -389,6 +390,11 @@ class King(Piece):
       return []
     x, y = self.position
     kingDirections = [(x - 1, y - 1),(x + 1, y - 1),(x - 1, y + 1),(x + 1, y + 1),(x, y + 1),(x, y - 1),(x + 1, y),(x - 1, y)]
+    castleDirections = [(x, y + 2),(x, y - 2)]
+    whiteShortCastleSquares = [(7,6),(7,5)]
+    whiteLongCastleSquares = [(7,1), (7,2), (7,3)]
+    blackShortCastleSquares = [(0,6),(0,5)]
+    blackLongCastleSquares = [(0,1), (0,2), (0,3)]
     moves = []
 
     for move in kingDirections: #check if they are on the board and append them
@@ -399,6 +405,44 @@ class King(Piece):
         else: #if square has a piece on it
           if piece.color != self.color:
             moves.append(move)
+    
+    if self.movesMade == 0: #king hasnt moved
+      if self.color == "White":
+        shortCastle = True
+        longCastle = True
+        piece = findPiece((7,7)) #short castle
+        if piece != 0 and piece.color == "White" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
+          for move in whiteShortCastleSquares:
+            if findPiece(move) != 0: #piece in between
+              shortCastle = False
+          if shortCastle == True:
+            print("White can Short Castle") #SHORTCASTLE WHITE
+        piece = findPiece((7,0)) #long castle
+        if piece != 0 and piece.color == "White" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
+          for move in whiteLongCastleSquares:
+            if findPiece(move) != 0: #piece in between
+              longCastle = False
+          if longCastle == True:
+            print("White can Long Castle") #LONGCASTLE WHITE
+      if self.color == "Black":
+        shortCastle = True
+        longCastle = True
+        piece = findPiece((0,7)) #short castle
+        if piece != 0 and piece.color == "Black" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
+          for move in blackShortCastleSquares:
+            if findPiece(move) != 0: #piece in between
+              shortCastle = False
+          if shortCastle == True:
+            print("Black can Short Castle") #SHORTCASTLE BLACK
+        piece = findPiece((0,0)) #long castle
+        if piece != 0 and piece.color == "Black" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
+          for move in blackLongCastleSquares:
+            if findPiece(move) != 0: #piece in between
+              longCastle = False
+          if longCastle == True:
+            print("Black can Long Castle") #LONGCASTLE BLACK
+          
+      
 
     return moves
 

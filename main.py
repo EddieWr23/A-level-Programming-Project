@@ -9,8 +9,8 @@ p.init()
 WIDTH, HEIGHT = 512, 512 #default is 512, 512
 DIMENSION = 8 #chess boards are 8x8
 SQ_SIZE = HEIGHT//DIMENSION
-MAX_FPS = 15 #for animations later on
-THEME = 3
+MAX_FPS = 15 #for animations
+THEME = 2
 
 if THEME == 1: # Black and White
     lightSquareColor = p.Color(255,255,255)
@@ -150,6 +150,7 @@ def debugSquare(position):
         print(piece.__class__)
         print("POSITION - " + str(RF(piece.position)) + " / " + str(piece.position))
         print("number of pseudolegal moves - " + str(len(moves)) + ":")
+        print("Moves Made - " + str(piece.movesMade))
         print(rf_moves)
 
 def debugGame():
@@ -190,7 +191,7 @@ def movePiece(oldpos, newpos):
         checkForPromotes()
         playedMoves.append((oldpos, newpos))
         pieces.whiteToMove = not pieces.whiteToMove # changes side to play moves
-
+        pieceToMove.movesMade = pieceToMove.movesMade + 1
         return True
 
 def getAllLegalMoves():
@@ -233,11 +234,11 @@ def calculateMaterial():
     whiteMaterial, blackMaterial = 0, 0
     for piece in pieces.board:
         if piece.color == "Black":
-            blackMaterial = blackMaterial + piece.value - 100
+            blackMaterial = blackMaterial + piece.value
         else:
-            whiteMaterial = whiteMaterial + piece.value - 100
+            whiteMaterial = whiteMaterial + piece.value
     materialDifference = whiteMaterial - blackMaterial
-    return whiteMaterial, blackMaterial, materialDifference
+    return (whiteMaterial-100), (blackMaterial-100), materialDifference
 
 def AI_makeRandomMove():
     allLegalMoves = getAllLegalMoves()
@@ -286,10 +287,12 @@ def chessTimer(color, counter):
 
 
 if __name__ == '__main__':
-    if GUI.GUI() == True:
-        chess()
+    #if GUI.GUI() == True:
+    chess()
         #t_chess = threading.Thread(target=chess)
         #t_clock = threading.Thread(target=chessTimer, args=("White",10,))
         #t_chess.start()
         #t_chess.join()
     #t_clock.start()
+
+    
