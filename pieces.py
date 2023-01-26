@@ -390,7 +390,7 @@ class King(Piece):
       return []
     x, y = self.position
     kingDirections = [(x - 1, y - 1),(x + 1, y - 1),(x - 1, y + 1),(x + 1, y + 1),(x, y + 1),(x, y - 1),(x + 1, y),(x - 1, y)]
-    castleDirections = [(x, y + 2),(x, y - 2)]
+    castleDirections = [(x, y + 2),(x, y - 2)] # short and long
     whiteShortCastleSquares = [(7,6),(7,5)]
     whiteLongCastleSquares = [(7,1), (7,2), (7,3)]
     blackShortCastleSquares = [(0,6),(0,5)]
@@ -416,14 +416,14 @@ class King(Piece):
             if findPiece(move) != 0: #piece in between
               shortCastle = False
           if shortCastle == True:
-            print("White can Short Castle") #SHORTCASTLE WHITE
+            moves.append(castleDirections[0]) #SHORTCASTLE WHITE
         piece = findPiece((7,0)) #long castle
         if piece != 0 and piece.color == "White" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
           for move in whiteLongCastleSquares:
             if findPiece(move) != 0: #piece in between
               longCastle = False
           if longCastle == True:
-            print("White can Long Castle") #LONGCASTLE WHITE
+            moves.append(castleDirections[1]) #LONGCASTLE WHITE
       if self.color == "Black":
         shortCastle = True
         longCastle = True
@@ -433,14 +433,14 @@ class King(Piece):
             if findPiece(move) != 0: #piece in between
               shortCastle = False
           if shortCastle == True:
-            print("Black can Short Castle") #SHORTCASTLE BLACK
+            moves.append(castleDirections[0]) #SHORTCASTLE BLACK
         piece = findPiece((0,0)) #long castle
         if piece != 0 and piece.color == "Black" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
           for move in blackLongCastleSquares:
             if findPiece(move) != 0: #piece in between
               longCastle = False
           if longCastle == True:
-            print("Black can Long Castle") #LONGCASTLE BLACK
+            moves.append(castleDirections[1]) #LONGCASTLE BLACK
           
       
 

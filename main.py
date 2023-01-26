@@ -10,7 +10,7 @@ WIDTH, HEIGHT = 512, 512 #default is 512, 512
 DIMENSION = 8 #chess boards are 8x8
 SQ_SIZE = HEIGHT//DIMENSION
 MAX_FPS = 15 #for animations
-THEME = 2
+THEME = 4
 
 if THEME == 1: # Black and White
     lightSquareColor = p.Color(255,255,255)
@@ -21,6 +21,9 @@ elif THEME == 2: # Green and beige
 elif THEME == 3: # brown and beige
     lightSquareColor = p.Color(215,255,185)
     darkSquareColor = p.Color(175,95,0)
+elif THEME == 4: # red and blue
+    lightSquareColor = p.Color(0,0,255)
+    darkSquareColor = p.Color(255,0,0)
 
 redCircle = p.transform.scale(p.image.load("images/red.png"), (64,64))
 yellowCircle = p.transform.scale(p.image.load("images/yellow.png"), (64,64))
