@@ -226,6 +226,9 @@ def isSquareAttacked(position):
         color = "White"
     else:
         color = "Black"
+    tempRemPiece = pieces.findPiece(position)
+    if tempRemPiece != 0:
+        pieces.board.remove(tempRemPiece)
     tempPiece = pieces.Temp(position,color)
     pieces.board.append(tempPiece)
     pieces.whiteToMove = not pieces.whiteToMove
@@ -234,9 +237,13 @@ def isSquareAttacked(position):
         if move[1] == tempPiece.position:
             pieces.whiteToMove = not pieces.whiteToMove
             pieces.board.remove(tempPiece)
+            if tempRemPiece != 0:
+                pieces.board.append(tempRemPiece)
             return True
     pieces.whiteToMove = not pieces.whiteToMove
     pieces.board.remove(tempPiece)
+    if tempRemPiece != 0:
+        pieces.board.append(tempRemPiece)
     return False
 
 
@@ -287,7 +294,10 @@ def AI_makeMaterialMove():
         pieceToMove = pieces.findPiece(move[0])
         pieceToCapture = pieces.findPiece(move[1])
         if pieceToCapture != 0:
-            materialExchange = pieceToCapture.value - pieceToMove.value
+            if isSquareAttacked(pieceToCapture.position) == False:
+                materialExchange = pieceToCapture.value
+            else:
+                materialExchange = pieceToCapture.value - pieceToMove.value
             if materialExchange > bestMoveMaterial and materialExchange > 0:
                 bestMove, bestMoveMaterial = move, materialExchange
     try:
