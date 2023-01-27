@@ -441,11 +441,14 @@ class King(Piece):
               longCastle = False
           if longCastle == True:
             moves.append(castleDirections[1]) #LONGCASTLE BLACK
-          
-      
 
     return moves
 
+class Temp(Piece):
+  def __init__(self, position, color):
+    super().__init__(position, color)
+  def get_legal_moves(self):
+    return []
 '''
 BOARD ####################################################################################################################
 '''
@@ -462,3 +465,7 @@ def findPiece(position):
         if piece.position == position:
             return piece
     return 0
+
+def isSquareAttacked(position):
+  whiteToMove = not whiteToMove
+  

@@ -155,6 +155,7 @@ def debugSquare(position):
         print("number of pseudolegal moves - " + str(len(moves)) + ":")
         print("Moves Made - " + str(piece.movesMade))
         print(rf_moves)
+    print("Square attacked = " + str(isSquareAttacked(position)))
 
 def debugGame():
     print("-----DEBUGGING GAME-----")
@@ -187,6 +188,7 @@ def movePiece(oldpos, newpos):
                 global running
                 running = False
                 GUI.kingCaptured(pieceToCapture.color)
+                return True
         pieceToMove = pieces.findPiece(oldpos)
         pieceToMove.position = (newpos)
         print("MOVE MADE - " + str(pieceToMove.symbol + piecetaken + RF(newpos)))
@@ -219,18 +221,34 @@ def getAllLegalMoves():
             allLegalMoves.append(((piece.position),(move)))
     return allLegalMoves
 
-def checkForChecks():
-    allLegalMoves = getAllLegalMoves()
+def isSquareAttacked(position):
     if pieces.whiteToMove == True:
-        for move in allLegalMoves:
-            piece = pieces.findPiece(move)
-            if piece != 0 and piece.symbol == "K" and piece.color == "Black":
-                print("BLACK IN CHECK")
-    if pieces.whiteToMove == False:
-        for move in allLegalMoves:
-            piece = pieces.findPiece(move)
-            if piece != 0 and piece.symbol == "K" and piece.color == "White":
-                print("WHITE IN CHECK")
+        color = "White"
+    else:
+        color = "Black"
+    tempPiece = pieces.Temp(position,color)
+    pieces.board.append(tempPiece)
+    pieces.whiteToMove = not pieces.whiteToMove
+    allLegalMoves = getAllLegalMoves()
+    for move in allLegalMoves:
+        if move[1] == tempPiece.position:
+            pieces.whiteToMove = not pieces.whiteToMove
+            pieces.board.remove(tempPiece)
+            return True
+    pieces.whiteToMove = not pieces.whiteToMove
+    pieces.board.remove(tempPiece)
+    return False
+
+
+def checkForChecks():
+    if pieces.whiteToMove == True:
+        color = "White"
+    else:
+        color = "Black"
+    for piece in pieces.board:
+        if piece.symbol == 'K' and piece.color == color:
+            if isSquareAttacked(piece.position) == True:
+                print("Check")
 
 def checkForPromotes():
     for piece in pieces.board:
