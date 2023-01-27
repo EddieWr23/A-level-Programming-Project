@@ -10,7 +10,7 @@ WIDTH, HEIGHT = 512, 512 #default is 512, 512
 DIMENSION = 8 #chess boards are 8x8
 SQ_SIZE = HEIGHT//DIMENSION
 MAX_FPS = 15 #for animations
-THEME = 4
+THEME = 2
 
 if THEME == 1: # Black and White
     lightSquareColor = p.Color(255,255,255)
@@ -195,6 +195,20 @@ def movePiece(oldpos, newpos):
         playedMoves.append((oldpos, newpos))
         pieces.whiteToMove = not pieces.whiteToMove # changes side to play moves
         pieceToMove.movesMade = pieceToMove.movesMade + 1
+
+        if pieceToMove.symbol == 'K':
+            if oldpos == (7,4) and newpos == (7,6):
+                rook = pieces.findPiece((7,7))
+                rook.position = (7,5)
+            elif oldpos == (7,4) and newpos == (7,2):
+                rook = pieces.findPiece((7,0))
+                rook.position = (7,3)
+            elif oldpos == (0,4) and newpos == (0,6):
+                rook = pieces.findPiece((0,7))
+                rook.position = (0,5)
+            elif oldpos == (7,4) and newpos == (7,6):
+                rook = pieces.findPiece((0,0))
+                rook.position = (7,5)
         return True
 
 def getAllLegalMoves():
