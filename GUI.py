@@ -283,20 +283,48 @@ CHOOSING A PROMOTION ---------------------------------------------------------
 
 
 def choosePromote(color):
-        if color == "Black":
-            column_to_be_centered = [
-                [sg.Text('Choose a Promotion')],
-                [sg.Button('Queen'), sg.Image(r'images/bQ.png'), sg.Button('Knight'), sg.Image(r'images/bN.png')],
-                [sg.Button('Rook'), sg.Image(r'images/bR.png'), sg.Button('Bishop'), sg.Image(r'images/bB.png')]
-            ]
-        else:
-            column_to_be_centered = [
-                [sg.Text('Choose a Promotion')],
-                [sg.Button('Queen'), sg.Image(r'images/wQ.png'), sg.Button('Knight'), sg.Image(r'images/wN.png')],
-                [sg.Button('Rook'), sg.Image(r'images/wR.png'), sg.Button('Bishop'), sg.Image(r'images/wB.png')]
-            ]
+    if color == "Black":
+        column_to_be_centered = [
+            [sg.Text('Choose a Promotion')],
+            [sg.Button('Queen'), sg.Image(r'images/bQ.png'), sg.Button('Knight'), sg.Image(r'images/bN.png')],
+            [sg.Button('Rook'), sg.Image(r'images/bR.png'), sg.Button('Bishop'), sg.Image(r'images/bB.png')]
+        ]
+    else:
+        column_to_be_centered = [
+            [sg.Text('Choose a Promotion')],
+            [sg.Button('Queen'), sg.Image(r'images/wQ.png'), sg.Button('Knight'), sg.Image(r'images/wN.png')],
+            [sg.Button('Rook'), sg.Image(r'images/wR.png'), sg.Button('Bishop'), sg.Image(r'images/wB.png')]
+        ]
 
-        layout = [
+    layout = [
+        [
+            [sg.VPush()],
+            [sg.Push(), sg.Column(column_to_be_centered,element_justification='c'), sg.Push()],
+            [sg.VPush()]
+        ]
+    ]
+
+    top_window = sg.Window('Choose a Promotion', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
+
+    while True:
+        window, event, values = sg.read_all_windows()
+
+        if event != 'Exit':
+            top_window.close()
+            return event
+
+def kingCaptured(color):
+    if color == "Black": #if white captures blacks king
+        column_to_be_centered = [
+            [sg.Text('White wins!'), sg.Image(r'images/wQ.png')],
+            [sg.Button("Exit Game")]
+        ]
+    else:
+        column_to_be_centered = [
+            [sg.Text('Black wins!'), sg.Image(r'images/bQ.png')],
+            [sg.Button("Exit Game")]
+        ]
+    layout = [
             [
                 [sg.VPush()],
                 [sg.Push(), sg.Column(column_to_be_centered,element_justification='c'), sg.Push()],
@@ -304,17 +332,10 @@ def choosePromote(color):
             ]
         ]
 
-        top_window = sg.Window('Choose a Promotion', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
+    top_window = sg.Window('Choose a Promotion', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
 
-        while True:
-            window, event, values = sg.read_all_windows()
-
-            if event != 'Exit':
-                top_window.close()
-                return event
-
-def kingCaptured(color):
-    if color == "Black":
-        sg.popup("White Wins!")
-    else:
-        sg.popup("Black Wins!")
+    while True:
+        window, event, values = sg.read_all_windows()
+        if event == "Exit Game":
+            top_window.close()
+            break
