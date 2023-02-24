@@ -10,8 +10,9 @@ WIDTH, HEIGHT = 512, 512 #default is 512, 512
 DIMENSION = 8 #chess boards are 8x8
 SQ_SIZE = HEIGHT//DIMENSION
 MAX_FPS = 15 #for animations
-THEME = 2
-
+#global THEME
+#THEME = ['Black and White']
+'''
 if THEME == 1: # Black and White
     lightSquareColor = p.Color(255,255,255)
     darkSquareColor = p.Color("gray")
@@ -24,13 +25,14 @@ elif THEME == 3: # brown and beige
 elif THEME == 4: # red and blue
     lightSquareColor = p.Color(0,0,255)
     darkSquareColor = p.Color(255,0,0)
+'''
 
 redCircle = p.transform.scale(p.image.load("images/red.png"), (64,64))
 yellowCircle = p.transform.scale(p.image.load("images/yellow.png"), (64,64))
 
 playedMoves = []
 
-'''
+'''#
 Functions for ranks and files
 '''
 def rank(num):
@@ -47,7 +49,7 @@ def RF(position):
 The main chess program
 '''
 def chess():
-    screen = p.display.set_mode((WIDTH*1.5, HEIGHT))
+    screen = p.display.set_mode((WIDTH, HEIGHT)) #WIDTH*1.5 for sidebar
     p.display.set_caption("Eddie's Chess Program")
     Icon = p.image.load(r"images/bK.png")
     p.display.set_icon(Icon)
@@ -55,9 +57,19 @@ def chess():
     screen.fill(p.Color("black"))
     global running
     running = True
+    global colors
+    colors = [p.Color(255,255,255),p.Color("gray")]
     sqSelected = ()
     playerClicks = []
     possibleMoves = []
+    print(GUI.THEME)
+    if GUI.THEME == ['Black and White']: # Black and White
+        colors = [p.Color(255,255,255),p.Color("gray")]
+    elif GUI.THEME == ['Green and Beige']: # Green and beige
+        colors = [p.Color(215,255,185),p.Color(95, 135, 0)]
+    elif GUI.THEME == ['Brown and Beige']: # brown and beige
+        colors = [p.Color(215, 255, 185),p.Color(175, 95, 0)]
+
     while running:
         for e in p.event.get():
 
@@ -87,7 +99,8 @@ def chess():
                     else:
                         piece = pieces.findPiece(sqSelected)
                         if piece != 0:
-                            possibleMoves = piece.get_legal_moves()
+                            #possibleMoves = piece.get_legal_moves()
+                            possibleMoves = []
                         else: # if the users first press is an empty square
                             possibleMoves = []
                             if len(playerClicks) == 1: 
@@ -102,19 +115,18 @@ def chess():
                 if e.key == p.K_DOWN:
                     debugGame()
 
-            drawGameState(screen,pieces.board,sqSelected,possibleMoves)
+            drawGameState(screen,pieces.board,sqSelected,possibleMoves, colors)
             clock.tick(MAX_FPS)
             p.display.flip()
 
-def drawGameState(screen, board, sqSelected,possibleMoves):
-    drawBoard(screen,sqSelected,possibleMoves) # draw squares on the board
+def drawGameState(screen, board, sqSelected,possibleMoves, colors):
+    drawBoard(screen,sqSelected,possibleMoves, colors) # draw squares on the board
     drawPieces(screen, board) # draw pieces on the squares
 
 '''
 Draws the Squares on the board, The top Left Square is always light. Also draws yellow circles and red squares on square selected and legal moves respectively
 '''
-def drawBoard(screen,sqSelected,possibleMoves):
-    colors = [lightSquareColor, darkSquareColor] # light squares, dark squares respectively
+def drawBoard(screen,sqSelected,possibleMoves, colors):
     for row in range(DIMENSION):
         for col in range(DIMENSION):
             color = colors[(row+col)%2]
@@ -136,11 +148,6 @@ def drawPieces(screen, board):
         row = piece.position[0]
         col = piece.position[1]
         screen.blit(image, p.Rect(col*SQ_SIZE, row*SQ_SIZE, SQ_SIZE, SQ_SIZE))
-
-def getAllLegalMoves(board):
-    moves = []
-    for piece in board:
-        moves.append[piece.get_legal_moves]
 
 def debugSquare(position):
     piece = pieces.findPiece(position)
@@ -188,7 +195,7 @@ def movePiece(oldpos, newpos):
                 global running
                 running = False
                 GUI.kingCaptured(pieceToCapture.color)
-                return True
+                return False
         pieceToMove = pieces.findPiece(oldpos)
         pieceToMove.position = (newpos)
         print("MOVE MADE - " + str(pieceToMove.symbol + piecetaken + RF(newpos)))
@@ -213,27 +220,70 @@ def movePiece(oldpos, newpos):
                 rook.position = (7,5)
         return True
 
-def getAllLegalMoves():
-    allLegalMoves = []
+def getAllPossibleMoves():
+    allPossibleMoves = []
     for piece in pieces.board:
         moves = piece.get_legal_moves()
         for move in moves:
-            allLegalMoves.append(((piece.position),(move)))
+            allPossibleMoves.append(((piece.position),(move)))
+    return allPossibleMoves
+
+def findKing(color):
+    for piece in pieces.board:
+        if piece.symbol == "K" and piece.color == color:
+            return piece
+
+def getAllLegalMoves():
+    allLegalMoves = []
+    possibleMoves = getAllPossibleMoves() #get all pseudolegal moves
+    for move in possibleMoves:
+        tempPieceToCapture = pieces.findPiece(move[1])
+        tempPieceToMove = pieces.findPiece(move[0])
+        if pieces.whiteToMove:
+            king = findKing("White")
+        else:
+            king = findKing("Black")
+
+        if tempPieceToCapture != 0:
+            pieces.board.remove(tempPieceToCapture)
+        tempPieceToMove.position = move[1]
+
+        if isSquareAttacked(king.position) == False: #if the move means your king isnt attacked after, its legal
+            allLegalMoves.append(move)
+        
+        tempPieceToMove.position = move[0]
+        if tempPieceToCapture != 0:
+            pieces.board.append(tempPieceToCapture)
+    
+    if len(allLegalMoves) == 0:
+        if pieces.whiteToMove:
+            GUI.kingCaptured("White")
+        else:
+            GUI.kingCaptured("Black")
+        exit()
     return allLegalMoves
+
+
+        
+
+
+
+
+'''
 
 def isSquareAttacked(position):
     if pieces.whiteToMove == True:
-        color = "White"
-    else:
         color = "Black"
+    else:
+        color = "White"
     tempRemPiece = pieces.findPiece(position)
     if tempRemPiece != 0:
         pieces.board.remove(tempRemPiece)
     tempPiece = pieces.Temp(position,color)
     pieces.board.append(tempPiece)
     pieces.whiteToMove = not pieces.whiteToMove
-    allLegalMoves = getAllLegalMoves()
-    for move in allLegalMoves:
+    allPossibleMoves = getAllPossibleMoves()
+    for move in allPossibleMoves:
         if move[1] == tempPiece.position:
             pieces.whiteToMove = not pieces.whiteToMove
             pieces.board.remove(tempPiece)
@@ -246,16 +296,40 @@ def isSquareAttacked(position):
         pieces.board.append(tempRemPiece)
     return False
 
+'''
+
+def isSquareAttacked(position):
+    piece = pieces.findPiece(position)
+    if piece == 0:
+        return "empty"
+    else:
+        if (piece.color == "White" and pieces.whiteToMove == True) or (piece.color == "Black" and pieces.whiteToMove == False): #same color to move as piece attacked
+            pieces.whiteToMove = not pieces.whiteToMove
+            possibleMoves = getAllPossibleMoves()
+            for move in possibleMoves:
+                if move[1] == piece.position:
+                    pieces.whiteToMove = not pieces.whiteToMove
+                    return True
+            pieces.whiteToMove = not pieces.whiteToMove
+            return False
+        else:
+            possibleMoves = getAllPossibleMoves()
+            for move in possibleMoves:
+                if move[1] == piece.position:
+                    return True
+            return False
+
+
+
 
 def checkForChecks():
     if pieces.whiteToMove == True:
         color = "White"
     else:
         color = "Black"
-    for piece in pieces.board:
-        if piece.symbol == 'K' and piece.color == color:
-            if isSquareAttacked(piece.position) == True:
-                print("Check")
+    king = findKing(color)
+    if isSquareAttacked(king.position) == True:
+        print("Check")
 
 def checkForPromotes():
     for piece in pieces.board:

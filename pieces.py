@@ -447,6 +447,7 @@ class King(Piece):
 class Temp(Piece):
   def __init__(self, position, color):
     super().__init__(position, color)
+    self.symbol = "T"
   def get_legal_moves(self):
     return []
 '''

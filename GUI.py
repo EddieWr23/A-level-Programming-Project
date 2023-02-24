@@ -6,7 +6,8 @@ sg.theme("Dark Purple 7")
 sg.Window._move_all_windows = True
 
 Playing = False
-
+global THEME
+THEME = ['Black and White']
 
 
 def title_bar(title, text_color, background_color):
@@ -43,7 +44,7 @@ def GUI():
             [sg.Text('', font=('Century_Gothic 110'))],
             [sg.Text('Username '), sg.InputText(key= 'Username')],
             [sg.Text('Password '), sg.InputText(key= 'Password', password_char = '*')],
-            [sg.Button('Log In')]
+            [sg.Button('Log In'), sg.Button('Create Account')]
         ]
 
         layout = [
@@ -66,6 +67,10 @@ def GUI():
             #print (event)
             if event == sg.WIN_CLOSED or event == 'Exit': # if user closes window or clicks cancel
                 break
+            elif event == 'Create Account':
+                top_window.close()
+                window_background.close()
+                register()
             elif event == 'Log In':
                 #readlines in the login file
                 file1 = open('logIn.txt', 'r')
@@ -199,7 +204,9 @@ def GUI():
             if event == sg.WIN_CLOSED: # if user closes window or clicks cancel
                 break
             elif event == "Preferences + Customisation":
-                sg.popup("Work in Progress!")
+                top_window.close()
+                window_background.close()
+                customisation()
                 # opens a how to play window or link to the web
             elif event == "Help + Extras":
                 top_window.close()
@@ -273,6 +280,139 @@ def GUI():
         
         top_window.close()
         window_background.close()
+
+    '''
+    
+    '''
+    def customisation():
+
+        background_layout = [title_bar("Eddie's Chess Program", "White", "Gray"), [sg.Image(r'images/background4.gif')]]
+
+        window_background = sg.Window('CUSTOMISATION', background_layout, no_titlebar=True, finalize=True, margins=(0, 0), element_padding=(0,0), right_click_menu=[[''], ['Exit',]])
+        window_background['-C-'].expand(True, False, False)  # expand the titlebar's rightmost column so that it resizes correctly
+
+        column_to_be_centered = [
+            [sg.Text("CUSTOMISATION", font=('Century_Gothic 36'))],
+            [sg.Text('', font=('Century_Gothic 120'))],
+            [sg.Button('Theme'), sg.Listbox(["Black and White", "Green and Beige", "Brown and Beige"], size=(20,4), enable_events=False, key='_LIST_')],
+            [sg.Button('Save'), sg.Button('Back')]
+        ]
+
+        layout = [
+            [
+                [sg.VPush()],
+                [sg.Push(), sg.Column(column_to_be_centered,element_justification='c'), sg.Push()],
+                [sg.VPush()]
+            ]
+        ]
+
+        top_window = sg.Window('HELPANDEXTRAS', layout, finalize=True, keep_on_top=True, grab_anywhere=False,  transparent_color=sg.theme_background_color(), no_titlebar=True)
+
+        # window_background.send_to_back()
+        # top_window.bring_to_front()
+
+        while True:
+            window, event, values = sg.read_all_windows()
+            #print(event, values)
+            
+            #print (event)
+            if event == sg.WIN_CLOSED: # if user closes window or clicks cancel
+                break
+            elif event == "Save":
+                global THEME
+                THEME = values["_LIST_"]
+                #print("Theme saved as - " + str(THEME))
+                print(f"Theme saved as - {THEME}")
+                sg.popup("Saved!")
+            elif event == "Back":
+                top_window.close()
+                window_background.close()
+                settings()
+            else:
+                top_window.close()
+                window_background.close()
+                return event
+                
+        
+        top_window.close()
+        window_background.close()
+
+
+
+    '''
+    REGISTER WINDOW
+    '''
+    def register():
+
+        background_layout = [title_bar("Eddie's Chess Program", "White", "Gray"), [sg.Image(r'images/background4.gif')]]
+
+        window_background = sg.Window('REGISTER', background_layout, no_titlebar=True, finalize=True, margins=(0, 0), element_padding=(0,0), right_click_menu=[[''], ['Exit',]])
+        window_background['-C-'].expand(True, False, False)  # expand the titlebar's rightmost column so that it resizes correctly
+
+        column_to_be_centered = [
+            [sg.Text("Create an Account", font=('Century_Gothic 36'))],
+            [sg.Text('', font=('Century_Gothic 110'))],
+            [sg.Text('Username '), sg.InputText(key= 'Username')],
+            [sg.Text('Password '), sg.InputText(key= 'Password1', password_char = '*')],
+            [sg.Text('Password '), sg.InputText(key= 'Password2', password_char = '*')],
+            [sg.Button('Create Account'), sg.Button('Exit')]
+        ]
+
+        layout = [
+            [
+                [sg.VPush()],
+                [sg.Push(), sg.Column(column_to_be_centered,element_justification='c'), sg.Push()],
+                [sg.VPush()]
+            ]
+        ]
+
+        top_window = sg.Window('REGISTER WINDOW', layout, finalize=True, keep_on_top=True, grab_anywhere=False,  transparent_color=sg.theme_background_color(), no_titlebar=True)
+
+        # window_background.send_to_back()
+        # top_window.bring_to_front()
+
+        while True:
+            window, event, values = sg.read_all_windows()
+            #print(event, values)
+            
+            #print (event)
+            if event == sg.WIN_CLOSED or event == 'Exit': # if user closes window or clicks cancel
+                break
+            elif event == 'Create Account':
+                # read existing usernames and passwords from file
+                with open("logIn.txt", "r") as file:
+                    data = file.read().splitlines()
+                usernames = data[::2]
+                passwords = data[1::2]
+
+                # check if username is already stored
+                if values['Username'] in usernames:
+                    sg.popup("Username already taken.")
+                    return
+
+                # check if passwords match and are at least 8 characters long
+                if values['Password1'] != values['Password2']:
+                    sg.popup("Passwords do not match.")
+                    return
+                elif len(values['Password1']) < 8:
+                    sg.popup("Password is too short.")
+                    return
+
+                # store new username and password in file
+                passwordhash = hashlib.sha256((values['Password1']).encode('ascii')).hexdigest()
+                with open("logIn.txt", "a") as file:
+                    file.write(f"{values['Username']}\n{passwordhash}\n")
+                sg.popup("Account created successfully.")
+                top_window.close()
+                window_background.close()
+                login()
+
+
+        
+        top_window.close()
+        window_background.close()
+
+        
 
     login()
     return Playing
