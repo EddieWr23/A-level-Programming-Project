@@ -472,7 +472,34 @@ def kingCaptured(color):
             ]
         ]
 
-    top_window = sg.Window('Choose a Promotion', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
+    top_window = sg.Window('Win', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
+
+    while True:
+        window, event, values = sg.read_all_windows()
+        if event == "Exit Game":
+            top_window.close()
+            break
+
+def draw(condition):
+    if condition == "stalemate": #if its a stalemate
+        column_to_be_centered = [
+            [sg.Image(r'images/wQ.png'), sg.Text('Draw by Stalemate!'), sg.Image(r'images/bQ.png')],
+            [sg.Button("Exit Game")]
+        ]
+    else:
+        column_to_be_centered = [
+            [sg.Image(r'images/wQ.png'), sg.Text('Draw by Material!'), sg.Image(r'images/bQ.png')],
+            [sg.Button("Exit Game")]
+        ]
+    layout = [
+            [
+                [sg.VPush()],
+                [sg.Push(), sg.Column(column_to_be_centered,element_justification='c'), sg.Push()],
+                [sg.VPush()]
+            ]
+        ]
+
+    top_window = sg.Window('Draw', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
 
     while True:
         window, event, values = sg.read_all_windows()

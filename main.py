@@ -3,6 +3,7 @@ import pygame as p
 import GUI
 import random
 import threading
+import time
 
 #CHESS VARIABLES
 p.init()
@@ -90,7 +91,6 @@ def chess():
                     playerClicks.append(sqSelected) # append for both first and second clicks
                     if len(playerClicks) == 2: # if it was the second click
                         if movePiece(playerClicks[0], playerClicks[1]) == True:
-                            #AI_makeRandomMove()
                             AI_makeMaterialMove()
                         playerClicks = []
                         sqSelected = ()
@@ -112,10 +112,23 @@ def chess():
                     col = location[0]//SQ_SIZE
                     row = location[1]//SQ_SIZE
                     debugSquare((row, col))
-                if e.key == p.K_DOWN:
+                elif e.key == p.K_DOWN:
                     debugGame()
+                elif e.key == p.K_RIGHT:
+                    AI_makeMaterialMove()
+                elif e.key == p.K_LEFT:
+                    while True:
+                        AI_makeMaterialMove()
+                        drawGameState(screen,pieces.board,sqSelected,possibleMoves, colors)
+                        checkForSufficientMaterial()
+                        clock.tick(MAX_FPS)
+                        p.display.flip()
+                        time.sleep(0.1)
+            
+            
 
             drawGameState(screen,pieces.board,sqSelected,possibleMoves, colors)
+            checkForSufficientMaterial()
             clock.tick(MAX_FPS)
             p.display.flip()
 
@@ -151,7 +164,7 @@ def drawPieces(screen, board):
 
 def debugSquare(position):
     piece = pieces.findPiece(position)
-    if piece != 0:
+    if piece != 0: #if there is a piece
         rf_moves = []
         moves = piece.get_legal_moves()
         #print(moves)
@@ -163,9 +176,14 @@ def debugSquare(position):
         print("Moves Made - " + str(piece.movesMade))
         print(rf_moves)
     print("Square attacked = " + str(isSquareAttacked(position)))
+    print("Square defended = " + str(isSquareDefended(position)))
 
 def debugGame():
     print("-----DEBUGGING GAME-----")
+    if pieces.whiteToMove:
+        print("WHITE TO MOVE")
+    else:
+        print("BLACK TO MOVE")
     # moves made in this game
     print("Total Moves Made = " + str(len(playedMoves)) + ":")
     print(playedMoves)
@@ -235,15 +253,16 @@ def findKing(color):
 
 def getAllLegalMoves():
     allLegalMoves = []
-    possibleMoves = getAllPossibleMoves() #get all pseudolegal moves
+    possibleMoves = getAllPossibleMoves()
+    if pieces.whiteToMove:
+        king = findKing("White")
+    else:
+        king = findKing("Black")
+ #get all pseudolegal moves
     for move in possibleMoves:
         tempPieceToCapture = pieces.findPiece(move[1])
         tempPieceToMove = pieces.findPiece(move[0])
-        if pieces.whiteToMove:
-            king = findKing("White")
-        else:
-            king = findKing("Black")
-
+    
         if tempPieceToCapture != 0:
             pieces.board.remove(tempPieceToCapture)
         tempPieceToMove.position = move[1]
@@ -256,47 +275,15 @@ def getAllLegalMoves():
             pieces.board.append(tempPieceToCapture)
     
     if len(allLegalMoves) == 0:
-        if pieces.whiteToMove:
-            GUI.kingCaptured("White")
+        if isSquareAttacked(king.position):
+            if pieces.whiteToMove:
+                GUI.kingCaptured("White")
+            else:
+                GUI.kingCaptured("Black")
         else:
-            GUI.kingCaptured("Black")
+            GUI.draw("stalemate")
         exit()
     return allLegalMoves
-
-
-        
-
-
-
-
-'''
-
-def isSquareAttacked(position):
-    if pieces.whiteToMove == True:
-        color = "Black"
-    else:
-        color = "White"
-    tempRemPiece = pieces.findPiece(position)
-    if tempRemPiece != 0:
-        pieces.board.remove(tempRemPiece)
-    tempPiece = pieces.Temp(position,color)
-    pieces.board.append(tempPiece)
-    pieces.whiteToMove = not pieces.whiteToMove
-    allPossibleMoves = getAllPossibleMoves()
-    for move in allPossibleMoves:
-        if move[1] == tempPiece.position:
-            pieces.whiteToMove = not pieces.whiteToMove
-            pieces.board.remove(tempPiece)
-            if tempRemPiece != 0:
-                pieces.board.append(tempRemPiece)
-            return True
-    pieces.whiteToMove = not pieces.whiteToMove
-    pieces.board.remove(tempPiece)
-    if tempRemPiece != 0:
-        pieces.board.append(tempRemPiece)
-    return False
-
-'''
 
 def isSquareAttacked(position):
     piece = pieces.findPiece(position)
@@ -319,8 +306,34 @@ def isSquareAttacked(position):
                     return True
             return False
 
-
-
+def isSquareDefended(position):
+    piece = pieces.findPiece(position)
+    flip = False
+    if piece == 0:
+        return "empty"
+    else:
+        if (piece.color == "White" and pieces.whiteToMove == False) or (piece.color == "Black" and pieces.whiteToMove == True):
+            flip = True
+            pieces.whiteToMove = not pieces.whiteToMove
+        pieces.board.remove(piece)
+        if piece.color == "Black":
+            temp = pieces.Temp(piece.position, "White")
+        elif piece.color == "White":
+            temp = pieces.Temp(piece.position, "Black")
+        pieces.board.append(temp)
+        allLegalMoves = getAllLegalMoves()
+        for move in allLegalMoves:
+            if move[1] == piece.position:
+                if flip:
+                    pieces.whiteToMove = not pieces.whiteToMove
+                pieces.board.remove(temp)
+                pieces.board.append(piece)
+                return True
+        if flip:
+            pieces.whiteToMove = not pieces.whiteToMove
+        pieces.board.remove(temp)
+        pieces.board.append(piece)
+        return False
 
 def checkForChecks():
     if pieces.whiteToMove == True:
@@ -346,6 +359,12 @@ def checkForPromotes():
                 elif chosenPromote == "Knight":
                     pieces.board.append(pieces.Knight(piece.position, piece.color))
 
+def checkForSufficientMaterial():
+    whiteMaterial, blackMaterial, materialDifference = calculateMaterial()
+    if whiteMaterial == 0 and blackMaterial == 0:
+        GUI.draw("")
+        exit()
+
 def calculateMaterial():
     whiteMaterial, blackMaterial = 0, 0
     for piece in pieces.board:
@@ -368,7 +387,7 @@ def AI_makeMaterialMove():
         pieceToMove = pieces.findPiece(move[0])
         pieceToCapture = pieces.findPiece(move[1])
         if pieceToCapture != 0:
-            if isSquareAttacked(pieceToCapture.position) == False:
+            if isSquareDefended(pieceToCapture.position) == False:
                 materialExchange = pieceToCapture.value
             else:
                 materialExchange = pieceToCapture.value - pieceToMove.value
