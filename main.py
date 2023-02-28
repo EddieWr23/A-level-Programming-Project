@@ -74,6 +74,8 @@ def chess():
     while running:
         for e in p.event.get():
 
+            movemade = False
+
             if e.type == p.QUIT:
                 running = False
 
@@ -91,7 +93,7 @@ def chess():
                     playerClicks.append(sqSelected) # append for both first and second clicks
                     if len(playerClicks) == 2: # if it was the second click
                         if movePiece(playerClicks[0], playerClicks[1]) == True:
-                            AI_makeMaterialMove()
+                            movemade = True
                         playerClicks = []
                         sqSelected = ()
                         possibleMoves = []
@@ -131,6 +133,13 @@ def chess():
             checkForSufficientMaterial()
             clock.tick(MAX_FPS)
             p.display.flip()
+            if movemade == True:
+                AI_makeMaterialMove()
+                drawGameState(screen,pieces.board,sqSelected,possibleMoves, colors)
+                checkForSufficientMaterial()
+                clock.tick(MAX_FPS)
+                p.display.flip()
+
 
 def drawGameState(screen, board, sqSelected,possibleMoves, colors):
     drawBoard(screen,sqSelected,possibleMoves, colors) # draw squares on the board
@@ -288,7 +297,14 @@ def getAllLegalMoves():
 def isSquareAttacked(position):
     piece = pieces.findPiece(position)
     if piece == 0:
-        return "empty"
+        pieces.whiteToMove = not pieces.whiteToMove
+        possibleMoves = getAllPossibleMoves()
+        for move in possibleMoves:
+            if move[1] == position:
+                pieces.whiteToMove = not pieces.whiteToMove
+                return True
+        pieces.whiteToMove = not pieces.whiteToMove
+        return False
     else:
         if (piece.color == "White" and pieces.whiteToMove == True) or (piece.color == "Black" and pieces.whiteToMove == False): #same color to move as piece attacked
             pieces.whiteToMove = not pieces.whiteToMove
@@ -310,7 +326,23 @@ def isSquareDefended(position):
     piece = pieces.findPiece(position)
     flip = False
     if piece == 0:
-        return "empty"
+        if pieces.whiteToMove == True:
+            color = "Black"
+        else:
+            color = "White"
+        pieces.whiteToMove = not pieces.whiteToMove
+        temp = pieces.Temp(position, color)
+        pieces.board.append(temp)
+        allLegalMoves = getAllLegalMoves()
+        for move in allLegalMoves:
+            if move[1] == position:
+                pieces.whiteToMove = not pieces.whiteToMove
+                pieces.board.remove(temp)
+                return True
+        pieces.whiteToMove = not pieces.whiteToMove
+        pieces.board.remove(temp)
+        return False
+
     else:
         if (piece.color == "White" and pieces.whiteToMove == False) or (piece.color == "Black" and pieces.whiteToMove == True):
             flip = True
@@ -376,8 +408,18 @@ def calculateMaterial():
     return (whiteMaterial-100), (blackMaterial-100), materialDifference
 
 def AI_makeRandomMove():
+    hangingMoves = []
+    nonHangingMoves = []
     allLegalMoves = getAllLegalMoves()
-    moveToMake = random.choice(allLegalMoves)
+    for move in allLegalMoves:
+        if isSquareAttacked(move[1]) == True and isSquareDefended(move[1]) == False:
+            hangingMoves.append(move)
+        else:
+            nonHangingMoves.append(move)
+    try:
+        moveToMake = random.choice(nonHangingMoves)
+    except:
+        moveToMake = random.choice(hangingMoves)
     movePiece(moveToMake[0], moveToMake[1])
 
 def AI_makeMaterialMove():
