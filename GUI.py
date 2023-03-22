@@ -470,12 +470,12 @@ def choosePromote(color):
 def kingCaptured(color):
     if color == "Black": #if white captures blacks king
         column_to_be_centered = [
-            [sg.Text('White wins!'), sg.Image(r'images/wQ.png')],
+            [sg.Text('White wins!'), sg.Image(r'images/wK.png')],
             [sg.Button("Exit Game")]
         ]
     else:
         column_to_be_centered = [
-            [sg.Text('Black wins!'), sg.Image(r'images/bQ.png')],
+            [sg.Text('Black wins!'), sg.Image(r'images/bK.png')],
             [sg.Button("Exit Game")]
         ]
     layout = [
@@ -497,12 +497,12 @@ def kingCaptured(color):
 def draw(condition):
     if condition == "stalemate": #if its a stalemate
         column_to_be_centered = [
-            [sg.Image(r'images/wQ.png'), sg.Text('Draw by Stalemate!'), sg.Image(r'images/bQ.png')],
+            [sg.Image(r'images/wK.png'), sg.Text('Draw by Stalemate!'), sg.Image(r'images/bK.png')],
             [sg.Button("Exit Game")]
         ]
     else:
         column_to_be_centered = [
-            [sg.Image(r'images/wQ.png'), sg.Text('Draw by Material!'), sg.Image(r'images/bQ.png')],
+            [sg.Image(r'images/wK.png'), sg.Text('Draw by Material!'), sg.Image(r'images/bK.png')],
             [sg.Button("Exit Game")]
         ]
     layout = [
