@@ -5,7 +5,7 @@ class Piece:
   def __init__(self, position, color):
     self.position = position
     self.color = color
-    self.movesMade = []
+    self.movesMade = 0
   
   # method to get the legal moves for a piece
   def checkForSelfChecks(moves):
@@ -390,6 +390,11 @@ class King(Piece):
       return []
     x, y = self.position
     kingDirections = [(x - 1, y - 1),(x + 1, y - 1),(x - 1, y + 1),(x + 1, y + 1),(x, y + 1),(x, y - 1),(x + 1, y),(x - 1, y)]
+    castleDirections = [(x, y + 2),(x, y - 2)] # short and long
+    whiteShortCastleSquares = [(7,6),(7,5)]
+    whiteLongCastleSquares = [(7,1), (7,2), (7,3)]
+    blackShortCastleSquares = [(0,6),(0,5)]
+    blackLongCastleSquares = [(0,1), (0,2), (0,3)]
     moves = []
 
     for move in kingDirections: #check if they are on the board and append them
@@ -400,12 +405,56 @@ class King(Piece):
         else: #if square has a piece on it
           if piece.color != self.color:
             moves.append(move)
+    
+    if self.movesMade == 0: #king hasnt moved
+      if self.color == "White":
+        shortCastle = True
+        longCastle = True
+        piece = findPiece((7,7)) #short castle
+        if piece != 0 and piece.color == "White" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
+          for move in whiteShortCastleSquares:
+            if findPiece(move) != 0: #piece in between
+              shortCastle = False
+          if shortCastle == True:
+            moves.append(castleDirections[0]) #SHORTCASTLE WHITE
+        piece = findPiece((7,0)) #long castle
+        if piece != 0 and piece.color == "White" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
+          for move in whiteLongCastleSquares:
+            if findPiece(move) != 0: #piece in between
+              longCastle = False
+          if longCastle == True:
+            moves.append(castleDirections[1]) #LONGCASTLE WHITE
+      if self.color == "Black":
+        shortCastle = True
+        longCastle = True
+        piece = findPiece((0,7)) #short castle
+        if piece != 0 and piece.color == "Black" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
+          for move in blackShortCastleSquares:
+            if findPiece(move) != 0: #piece in between
+              shortCastle = False
+          if shortCastle == True:
+            moves.append(castleDirections[0]) #SHORTCASTLE BLACK
+        piece = findPiece((0,0)) #long castle
+        if piece != 0 and piece.color == "Black" and piece.symbol == "R" and piece.movesMade == 0: #king and rook havent moved
+          for move in blackLongCastleSquares:
+            if findPiece(move) != 0: #piece in between
+              longCastle = False
+          if longCastle == True:
+            moves.append(castleDirections[1]) #LONGCASTLE BLACK
 
     return moves
 
+class Temp(Piece):
+  def __init__(self, position, color):
+    super().__init__(position, color)
+    self.symbol = "T"
+  def get_legal_moves(self):
+    return []
 '''
 BOARD ####################################################################################################################
 '''
+
+
 board = [Rook((7,0),"White"),Knight((7,1),"White"),Bishop((7,2),"White"),Queen((7,3),"White"),King((7,4),"White"),Bishop((7,5),"White"),Knight((7,6),"White"),Rook((7,7),"White"),
         Pawn((6,0),"White"),Pawn((6,1),"White"),Pawn((6,2),"White"),Pawn((6,3),"White"),Pawn((6,4),"White"),Pawn((6,5),"White"),Pawn((6,6),"White"),Pawn((6,7),"White"),
         Rook((0,0),"Black"),Knight((0,1),"Black"),Bishop((0,2),"Black"),Queen((0,3),"Black"),King((0,4),"Black"),Bishop((0,5),"Black"),Knight((0,6),"Black"),Rook((0,7),"Black"),
@@ -419,3 +468,7 @@ def findPiece(position):
         if piece.position == position:
             return piece
     return 0
+
+def isSquareAttacked(position):
+  whiteToMove = not whiteToMove
+  
