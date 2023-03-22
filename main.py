@@ -103,12 +103,14 @@ def chess():
                         playerClicks = []
                         sqSelected = ()
                         possibleMoves = []
-                        
-                    else:
+                    else: # if players first click
+                        possibleMoves = []
                         piece = pieces.findPiece(sqSelected)
                         if piece != 0:
-                            #possibleMoves = piece.get_legal_moves()
-                            possibleMoves = []
+                            allLegalMoves = getAllLegalMoves()
+                            for move in allLegalMoves:
+                                if move[0] == piece.position:
+                                    possibleMoves.append(move[1])
                         else: # if the users first press is an empty square
                             possibleMoves = []
                             if len(playerClicks) == 1: 
@@ -153,12 +155,10 @@ def drawBoard(screen,sqSelected,possibleMoves, colors):
             color = colors[(row+col)%2]
             p.draw.rect(screen, color, p.Rect(col*SQ_SIZE, row*SQ_SIZE, SQ_SIZE, SQ_SIZE))
     if sqSelected != ():
-        #screen.blit(redCircle, p.Rect(sqSelected[1]*SQ_SIZE, sqSelected[0]*SQ_SIZE, SQ_SIZE, SQ_SIZE)) # draws a red circle on selected square
         p.draw.rect(screen, "red", p.Rect(sqSelected[1]*SQ_SIZE, sqSelected[0]*SQ_SIZE, SQ_SIZE, SQ_SIZE)) # draws a red square under the piece
     if possibleMoves != []:
         for move in possibleMoves:
             screen.blit(yellowCircle, p.Rect(move[1]*SQ_SIZE, move[0]*SQ_SIZE, SQ_SIZE, SQ_SIZE)) # draws a red circle on selected square
-            #p.draw.rect(screen, "yellow", p.Rect(move[1]*SQ_SIZE, move[0]*SQ_SIZE, SQ_SIZE, SQ_SIZE)) # draws a red square under the piece
 
 '''
 Draws the Pieces on the board, The top Left Square is always light
@@ -167,7 +167,7 @@ def drawPieces(screen, board):
     for piece in board:
         image = piece.image
         row = piece.position[0]
-        col = piece.position[1]
+        col = piece.position[1] 
         screen.blit(image, p.Rect(col*SQ_SIZE, row*SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 def debugSquare(position):
@@ -212,8 +212,8 @@ def movePiece(oldpos, newpos):
     piecetaken = ""
     pieceToMove = pieces.findPiece(oldpos)
     pieceToCapture = pieces.findPiece(newpos)
-    legalMoves = pieceToMove.get_legal_moves()
-    if (newpos) in legalMoves: # if the move is 'legal'
+    allLegalMoves = getAllLegalMoves()
+    if ((oldpos, newpos)) in allLegalMoves: # if the move is 'legal'
         if pieceToCapture != 0: # if there is a piece to capture (not an empty square)
             pieces.board.remove(pieceToCapture)
             piecetaken = "x"
@@ -431,8 +431,8 @@ def chessTimer(color, counter):
         clock.tick(60)
 
 if __name__ == '__main__':
-    #if GUI.GUI() == True:
-    chess()
+    if GUI.GUI() == True:
+        chess()
         #t_chess = threading.Thread(target=chess)
         #t_clock = threading.Thread(target=chessTimer, args=("White",10,))
         #t_chess.start()

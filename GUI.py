@@ -1,5 +1,6 @@
 import hashlib
 import PySimpleGUI as sg
+import webbrowser
 
 #LOGIN VARIABLES
 sg.theme("Dark Purple 7")
@@ -264,10 +265,9 @@ def GUI():
             if event == sg.WIN_CLOSED: # if user closes window or clicks cancel
                 break
             elif event == "How to Play":
-                sg.popup("Work in Progress!")
-                # opens a how to play window or link to the web
+                webbrowser.open('https://www.chess.com/learn-how-to-play-chess', new = 0, autoraise = True)# opens a how to play window or link to the web
             elif event == "Credits":
-                sg.popup("Created by Eddie", "AQA A-Level Programming Project")
+                sg.popup("Created by Eddie", "OCR A-Level Programming Project")
             elif event == "Back":
                 top_window.close()
                 window_background.close()
@@ -388,15 +388,29 @@ def GUI():
                 # check if username is already stored
                 if values['Username'] in usernames:
                     sg.popup("Username already taken.")
-                    return
-
+                    top_window.close()
+                    window_background.close()
+                    register()
+                    break
+                if values['Username'] == "":
+                    sg.popup("Please enter a username")
+                    top_window.close()
+                    window_background.close()
+                    register()
+                    break
                 # check if passwords match and are at least 8 characters long
                 if values['Password1'] != values['Password2']:
                     sg.popup("Passwords do not match.")
-                    return
+                    top_window.close()
+                    window_background.close()
+                    register()
+                    break
                 elif len(values['Password1']) < 8:
                     sg.popup("Password is too short.")
-                    return
+                    top_window.close()
+                    window_background.close()
+                    register()
+                    break
 
                 # store new username and password in file
                 passwordhash = hashlib.sha256((values['Password1']).encode('ascii')).hexdigest()
@@ -444,7 +458,7 @@ def choosePromote(color):
         ]
     ]
 
-    top_window = sg.Window('Choose a Promotion', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
+    top_window = sg.Window('Choose a Promotion', layout, finalize=True, keep_on_top=True, grab_anywhere=True, no_titlebar=True)
 
     while True:
         window, event, values = sg.read_all_windows()
@@ -472,7 +486,7 @@ def kingCaptured(color):
             ]
         ]
 
-    top_window = sg.Window('Win', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
+    top_window = sg.Window('Win', layout, finalize=True, keep_on_top=True, grab_anywhere=True, no_titlebar=True)
 
     while True:
         window, event, values = sg.read_all_windows()
@@ -499,7 +513,7 @@ def draw(condition):
             ]
         ]
 
-    top_window = sg.Window('Draw', layout, finalize=True, keep_on_top=True, grab_anywhere=False, no_titlebar=True)
+    top_window = sg.Window('Draw', layout, finalize=True, keep_on_top=True, grab_anywhere=True, no_titlebar=True)
 
     while True:
         window, event, values = sg.read_all_windows()
