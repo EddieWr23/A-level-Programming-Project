@@ -7,32 +7,17 @@ import time
 
 #CHESS VARIABLES
 p.init()
-WIDTH, HEIGHT = 512, 512 #default is 512, 512
-DIMENSION = 8 #chess boards are 8x8
-SQ_SIZE = HEIGHT//DIMENSION
+WIDTH, HEIGHT = pieces.WIDTH, pieces.HEIGHT #default is 512, 512
+DIMENSION = pieces.DIMENSION #chess boards are 8x8
+SQ_SIZE = pieces.SQ_SIZE
 MAX_FPS = 15 #for animations
-#global THEME
-#THEME = ['Black and White']
-'''
-if THEME == 1: # Black and White
-    lightSquareColor = p.Color(255,255,255)
-    darkSquareColor = p.Color("gray")
-elif THEME == 2: # Green and beige
-    lightSquareColor = p.Color(215,255,185)
-    darkSquareColor = p.Color(95,135,0)
-elif THEME == 3: # brown and beige
-    lightSquareColor = p.Color(215,255,185)
-    darkSquareColor = p.Color(175,95,0)
-elif THEME == 4: # red and blue
-    lightSquareColor = p.Color(0,0,255)
-    darkSquareColor = p.Color(255,0,0)
-'''
 
-redCircle = p.transform.scale(p.image.load("images/red.png"), (64,64))
-yellowCircle = p.transform.scale(p.image.load("images/yellow.png"), (64,64))
+
+redCircle = p.transform.scale(p.image.load("images/red.png"), (SQ_SIZE,SQ_SIZE))
+yellowCircle = p.transform.scale(p.image.load("images/yellow.png"), (SQ_SIZE,SQ_SIZE))
 
 playedMoves = []
-
+ 
 '''#
 Functions for ranks and files
 '''
@@ -473,8 +458,8 @@ def chessTimer(color, counter):
         clock.tick(60)
 
 if __name__ == '__main__':
-    if GUI.GUI() == True:
-        chess()
+    #if GUI.GUI() == True:
+    chess()
         #t_chess = threading.Thread(target=chess)
         #t_clock = threading.Thread(target=chessTimer, args=("White",10,))
         #t_chess.start()

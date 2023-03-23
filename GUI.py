@@ -58,14 +58,9 @@ def GUI():
 
         top_window = sg.Window('LOG IN WINDOW', layout, finalize=True, keep_on_top=True, grab_anywhere=False,  transparent_color=sg.theme_background_color(), no_titlebar=True)
 
-        # window_background.send_to_back()
-        # top_window.bring_to_front()
-
         while True:
             window, event, values = sg.read_all_windows()
-            #print(event, values)
-            
-            #print (event)
+
             if event == sg.WIN_CLOSED or event == 'Exit': # if user closes window or clicks cancel
                 break
             elif event == 'Create Account':
@@ -76,8 +71,6 @@ def GUI():
                 #readlines in the login file
                 file1 = open('logIn.txt', 'r')
                 Lines = file1.readlines()
-                #print(Lines)
-                
                 count = 0
                 # Strips the newline character
                 for line in Lines:
