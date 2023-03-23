@@ -1,5 +1,9 @@
 import pygame as p
 
+WIDTH, HEIGHT = 720, 720
+DIMENSION = 8
+SQ_SIZE = HEIGHT/DIMENSION
+
 # define the superclass "Piece"
 class Piece:
   def __init__(self, position, color):
@@ -24,9 +28,9 @@ class Pawn(Piece):
     self.symbol = ""
     self.value = 1
     if color == "White":
-      self.image = p.transform.scale(p.image.load("images/wp.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/wp.png"), (SQ_SIZE,SQ_SIZE))
     else:
-      self.image = p.transform.scale(p.image.load("images/bp.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/bp.png"), (SQ_SIZE,SQ_SIZE))
   
   def get_legal_moves(self):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
@@ -77,9 +81,9 @@ class Rook(Piece):
     self.symbol = "R"
     self.value = 5
     if color == "White":
-      self.image = p.transform.scale(p.image.load("images/wR.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/wR.png"), (SQ_SIZE,SQ_SIZE))
     else:
-      self.image = p.transform.scale(p.image.load("images/bR.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/bR.png"), (SQ_SIZE,SQ_SIZE))
   
   def get_legal_moves(self):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
@@ -150,9 +154,9 @@ class Knight(Piece):
     self.symbol = "N"
     self.value = 3
     if color == "White":
-      self.image = p.transform.scale(p.image.load("images/wN.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/wN.png"), (SQ_SIZE,SQ_SIZE))
     else:
-      self.image = p.transform.scale(p.image.load("images/bN.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/bN.png"), (SQ_SIZE,SQ_SIZE))
   
   def get_legal_moves(self):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
@@ -182,9 +186,9 @@ class Bishop(Piece):
     self.symbol = "B"
     self.value = 3
     if color == "White":
-      self.image = p.transform.scale(p.image.load("images/wB.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/wB.png"), (SQ_SIZE,SQ_SIZE))
     else:
-      self.image = p.transform.scale(p.image.load("images/bB.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/bB.png"), (SQ_SIZE,SQ_SIZE))
   
   def get_legal_moves(self):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
@@ -255,9 +259,9 @@ class Queen(Piece):
     self.symbol = "Q"
     self.value = 9
     if color == "White":
-      self.image = p.transform.scale(p.image.load("images/wQ.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/wQ.png"), (SQ_SIZE,SQ_SIZE))
     else:
-      self.image = p.transform.scale(p.image.load("images/bQ.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/bQ.png"), (SQ_SIZE,SQ_SIZE))
 
   
   def get_legal_moves(self):
@@ -381,9 +385,9 @@ class King(Piece):
     self.symbol = "K"
     self.value = 100
     if color == "White":
-      self.image = p.transform.scale(p.image.load("images/wK.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/wK.png"), (SQ_SIZE,SQ_SIZE))
     else:
-      self.image = p.transform.scale(p.image.load("images/bK.png"), (64,64))
+      self.image = p.transform.scale(p.image.load("images/bK.png"), (SQ_SIZE,SQ_SIZE))
   
   def get_legal_moves(self):
     if self.color == "White" and whiteToMove == False or self.color == "Black" and whiteToMove == True:
