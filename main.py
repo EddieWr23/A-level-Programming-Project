@@ -18,20 +18,20 @@ yellowCircle = p.transform.scale(p.image.load("images/yellow.png"), (SQ_SIZE,SQ_
 
 playedMoves = []
  
-'''#
+'''
 Functions for ranks and files
 '''
 def rank(num):
     return 8 - num
 
-def file(num):
+def file(num): # takes an integer representing a file number and returns the corresponding file letter as used in chess notation (e.g. file 0 is "a", file 7 is "h").
     files = {0:"a", 1:"b", 2:"c", 3:"d", 4:"e", 5:"f", 6:"g", 7:"h"}
     return files[num]
 
-def RF(position):
+def RF(position): # takes a tuple representing a chess position (in the form (rank, file)) and returns the corresponding position as a string in chess notation (e.g. (1, 0) becomes "a1").
     return(str(file(position[1])) + str(rank(position[0])))
 
-def undoRF(position):
+def undoRF(position): # takes a string representing a chess position (in the form "a1", "b2", etc.) and returns the corresponding position as a tuple (in the form (rank, file)). It "undoes" the RF function by converting the file letter back to a file number and subtracting the rank from 8 to get the rank number.
     position = list(position)
     files = {"a":0, "b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
     filenum = files[position[0]]
@@ -44,19 +44,22 @@ The main chess program
 '''
 def chess():
     screen = p.display.set_mode((WIDTH, HEIGHT)) #WIDTH*1.5 for sidebar
-    p.display.set_caption("Eddie's Chess Program")
-    Icon = p.image.load(r"images/bK.png")
+    p.display.set_caption("Eddie's Chess Program") # pygame title
+    Icon = p.image.load(r"images/bK.png") # pygame icon
     p.display.set_icon(Icon)
     clock = p.time.Clock()
     screen.fill(p.Color("black"))
     global running
     running = True
     global colors
-    colors = [p.Color(255,255,255),p.Color("gray")]
+    colors = [p.Color(255,255,255),p.Color("gray")] # default theme
     sqSelected = ()
     playerClicks = []
     possibleMoves = []
     print(GUI.THEME)
+    '''
+    THEMES
+    '''
     if GUI.THEME == ['Black and White']: # Black and White
         colors = [p.Color(255,255,255),p.Color("gray")]
     elif GUI.THEME == ['Green and Beige']: # Green and beige
@@ -72,7 +75,7 @@ def chess():
             if e.type == p.QUIT:
                 running = False
 
-            elif e.type == p.MOUSEBUTTONDOWN:
+            elif e.type == p.MOUSEBUTTONDOWN: # if the user presses the mouse
                 location = p.mouse.get_pos() # x and y position of mouse
                 col = location[0]//SQ_SIZE
                 row = location[1]//SQ_SIZE
@@ -108,12 +111,12 @@ def chess():
                     location = p.mouse.get_pos() # x and y position of mouse
                     col = location[0]//SQ_SIZE
                     row = location[1]//SQ_SIZE
-                    debugSquare((row, col))
-                elif e.key == p.K_DOWN:
+                    debugSquare((row, col)) # debug square
+                elif e.key == p.K_DOWN: #debug game
                     debugGame()
-                elif e.key == p.K_RIGHT:
+                elif e.key == p.K_RIGHT: # ai make move
                     AI_makeMaterialMove()
-                elif e.key == p.K_LEFT:
+                elif e.key == p.K_LEFT: # simulation loop
                     while True:
                         AI_makeMaterialMove()
                         drawGameState(screen,pieces.board,sqSelected,possibleMoves, colors)
@@ -124,10 +127,10 @@ def chess():
             
             
 
-            drawGameState(screen,pieces.board,sqSelected,possibleMoves, colors)
-            checkForSufficientMaterial()
+            drawGameState(screen,pieces.board,sqSelected,possibleMoves, colors) # draws game state
+            checkForSufficientMaterial() # checks the board isnt just 2 kings
             clock.tick(MAX_FPS)
-            p.display.flip()
+            p.display.flip() # update
             if movemade == True:
                 AI_makeMaterialMove()
                 drawGameState(screen,pieces.board,sqSelected,possibleMoves, colors)
@@ -147,23 +150,32 @@ def drawBoard(screen,sqSelected,possibleMoves, colors):
     for row in range(DIMENSION):
         for col in range(DIMENSION):
             color = colors[(row+col)%2]
-            p.draw.rect(screen, color, p.Rect(col*SQ_SIZE, row*SQ_SIZE, SQ_SIZE, SQ_SIZE))
+            p.draw.rect(screen, color, p.Rect(col*SQ_SIZE, row*SQ_SIZE, SQ_SIZE, SQ_SIZE)) #draws light and dark squares
     if sqSelected != ():
         p.draw.rect(screen, "red", p.Rect(sqSelected[1]*SQ_SIZE, sqSelected[0]*SQ_SIZE, SQ_SIZE, SQ_SIZE)) # draws a red square under the piece
     if possibleMoves != []:
         for move in possibleMoves:
-            screen.blit(yellowCircle, p.Rect(move[1]*SQ_SIZE, move[0]*SQ_SIZE, SQ_SIZE, SQ_SIZE)) # draws a red circle on selected square
+            screen.blit(yellowCircle, p.Rect(move[1]*SQ_SIZE, move[0]*SQ_SIZE, SQ_SIZE, SQ_SIZE)) # draws a yellow circle on legal moves
 
 '''
-Draws the Pieces on the board, The top Left Square is always light
+Draws the Pieces on the board
 '''
 def drawPieces(screen, board):
-    for piece in board:
+    for piece in board: # iterates through the board
         image = piece.image
         row = piece.position[0]
         col = piece.position[1] 
-        screen.blit(image, p.Rect(col*SQ_SIZE, row*SQ_SIZE, SQ_SIZE, SQ_SIZE))
+        screen.blit(image, p.Rect(col*SQ_SIZE, row*SQ_SIZE, SQ_SIZE, SQ_SIZE)) # draws image
 
+'''
+Debug Square function, returns
+- piece type
+- position
+- number of pseudolegalmoves
+- moves made
+- is Square Attacked
+- is Square Defended
+'''
 def debugSquare(position):
     piece = pieces.findPiece(position)
     if piece != 0: #if there is a piece
@@ -180,6 +192,14 @@ def debugSquare(position):
     print("Square attacked = " + str(isSquareAttacked(position)))
     print("Square defended = " + str(isSquareDefended(position)))
 
+'''
+Provides information about the current gameState
+- whos move it is
+- no of moves made
+- no of moves can be made in this position
+- white and black material
+- material difference
+'''
 def debugGame():
     print("-----DEBUGGING GAME-----")
     if pieces.whiteToMove:
@@ -201,7 +221,9 @@ def debugGame():
         print("Material Difference = " + str(materialDifference))
     print("--------------------")
 
-
+'''
+Function for moving a piece, will return true if the move has been sucessfuly made
+'''
 def movePiece(oldpos, newpos):
     piecetaken = ""
     pieceToMove = pieces.findPiece(oldpos)
@@ -216,8 +238,7 @@ def movePiece(oldpos, newpos):
                 running = False
                 GUI.kingCaptured(pieceToCapture.color)
                 return False
-        pieceToMove = pieces.findPiece(oldpos)
-        pieceToMove.position = (newpos)
+        pieceToMove.position = (newpos) # move piece
         print("MOVE MADE - " + str(pieceToMove.symbol + piecetaken + RF(newpos)))
         checkForChecks()
         checkForPromotes()
@@ -225,6 +246,9 @@ def movePiece(oldpos, newpos):
         pieces.whiteToMove = not pieces.whiteToMove # changes side to play moves
         pieceToMove.movesMade = pieceToMove.movesMade + 1
 
+        '''
+        This additionally moves the rook if the move was the king castling
+        '''
         if pieceToMove.symbol == 'K':
             if oldpos == (7,4) and newpos == (7,6):
                 rook = pieces.findPiece((7,7))
@@ -240,6 +264,9 @@ def movePiece(oldpos, newpos):
                 rook.position = (7,5)
         return True
 
+'''
+Function to return all pseudolegalmoves in a position, excluding checks and pins
+'''
 def getAllPossibleMoves():
     allPossibleMoves = []
     for piece in pieces.board:
@@ -248,19 +275,26 @@ def getAllPossibleMoves():
             allPossibleMoves.append(((piece.position),(move)))
     return allPossibleMoves
 
+'''
+Returns the King of the color passed in
+'''
 def findKing(color):
     for piece in pieces.board:
         if piece.symbol == "K" and piece.color == color:
             return piece
 
+'''
+Gets all possible moves with getAllPossibleMoves, then checks for legality and returns moves as a list
+The function simulates making the move by temporarily making the move, then checking if the King is attacked, which means the piece is pinned or equivalent, and the move is illegal
+'''
 def getAllLegalMoves():
     allLegalMoves = []
-    possibleMoves = getAllPossibleMoves()
+    possibleMoves = getAllPossibleMoves() #get all pseudolegal moves
     if pieces.whiteToMove:
         king = findKing("White")
     else:
         king = findKing("Black")
- #get all pseudolegal moves
+ 
     for move in possibleMoves:
         tempPieceToCapture = pieces.findPiece(move[1])
         tempPieceToMove = pieces.findPiece(move[0])
@@ -276,17 +310,20 @@ def getAllLegalMoves():
         if tempPieceToCapture != 0:
             pieces.board.append(tempPieceToCapture)
     
-    if len(allLegalMoves) == 0:
-        if isSquareAttacked(king.position):
+    if len(allLegalMoves) == 0: # if the user has no moves (checkmate or stalemate)
+        if isSquareAttacked(king.position): # if its a checkmate
             if pieces.whiteToMove:
                 GUI.kingCaptured("White")
             else:
                 GUI.kingCaptured("Black")
-        else:
+        else: # if its stalemate
             GUI.draw("stalemate")
         exit()
     return allLegalMoves
 
+'''
+Function to return bool value of if a square is attacked
+'''
 def isSquareAttacked(position):
     piece = pieces.findPiece(position)
     if piece == 0:
@@ -315,10 +352,14 @@ def isSquareAttacked(position):
                     return True
             return False
 
+'''
+Function to return bool value of if a square is defended
+Function swaps piece with one of opposite color, and checks if that piece is now attacked, as pieces cannot take their own pieces, so would always return false
+'''
 def isSquareDefended(position):
     piece = pieces.findPiece(position)
     flip = False
-    if piece == 0:
+    if piece == 0: # if the square is empty
         if pieces.whiteToMove == True:
             color = "Black"
         else:
@@ -336,9 +377,9 @@ def isSquareDefended(position):
         pieces.board.remove(temp)
         return False
 
-    else:
+    else: # if the square has a piece on it
         if (piece.color == "White" and pieces.whiteToMove == False) or (piece.color == "Black" and pieces.whiteToMove == True):
-            flip = True
+            flip = True # to allow swap back again
             pieces.whiteToMove = not pieces.whiteToMove
         pieces.board.remove(piece)
         if piece.color == "Black":
@@ -360,6 +401,9 @@ def isSquareDefended(position):
         pieces.board.append(piece)
         return False
 
+'''
+Function to print check if the program detects a king being attacked
+'''
 def checkForChecks():
     if pieces.whiteToMove == True:
         color = "White"
@@ -369,6 +413,9 @@ def checkForChecks():
     if isSquareAttacked(king.position) == True:
         print("Check")
 
+'''
+Function to check all pawns to see if they can be promoted, will run a GUI where the user can choose
+'''
 def checkForPromotes():
     for piece in pieces.board:
         if piece.symbol == "":
@@ -384,22 +431,31 @@ def checkForPromotes():
                 elif chosenPromote == "Knight":
                     pieces.board.append(pieces.Knight(piece.position, piece.color))
 
+'''
+checks the board has more than just 2 kings on it, to stop the games reaching an endless state of 2 kings
+'''
 def checkForSufficientMaterial():
     whiteMaterial, blackMaterial, materialDifference = calculateMaterial()
     if whiteMaterial == 0 and blackMaterial == 0:
         GUI.draw("")
         exit()
 
+'''
+calculates the material in a position
+'''
 def calculateMaterial():
     whiteMaterial, blackMaterial = 0, 0
-    for piece in pieces.board:
+    for piece in pieces.board: # iterates through board
         if piece.color == "Black":
             blackMaterial = blackMaterial + piece.value
         else:
             whiteMaterial = whiteMaterial + piece.value
-    materialDifference = whiteMaterial - blackMaterial
-    return (whiteMaterial-100), (blackMaterial-100), materialDifference
+    materialDifference = whiteMaterial - blackMaterial # material difference
+    return (whiteMaterial-100), (blackMaterial-100), materialDifference # subtracts 100 for kings value unaccounted
 
+'''
+Function to make the AI make a random move if it doesnt see anything better
+'''
 def AI_makeRandomMove():
     hangingMoves = []
     nonHangingMoves = []
@@ -415,16 +471,19 @@ def AI_makeRandomMove():
         moveToMake = random.choice(hangingMoves)
     movePiece(moveToMake[0], moveToMake[1])
 
+'''
+Function to make AI scan for gaining material lines
+'''
 def AI_makeMaterialMove():
     allLegalMoves = getAllLegalMoves()
     bestMoveMaterial = -100
-    for move in allLegalMoves:
+    for move in allLegalMoves: # for all possible moves
         pieceToMove = pieces.findPiece(move[0])
         pieceToCapture = pieces.findPiece(move[1])
         if pieceToCapture != 0:
-            if isSquareDefended(pieceToCapture.position) == False:
+            if isSquareDefended(pieceToCapture.position) == False: # if piece is hanging
                 materialExchange = pieceToCapture.value
-            else:
+            else: # if attacked piece is defended
                 materialExchange = pieceToCapture.value - pieceToMove.value
             if materialExchange > bestMoveMaterial and materialExchange > 0:
                 bestMove, bestMoveMaterial = move, materialExchange
@@ -435,35 +494,12 @@ def AI_makeMaterialMove():
         AI_makeRandomMove()
         print("randommove")
 
-def chessTimer(color, counter):
-    screen = p.display.set_mode((128, 64))
-    clock = p.time.Clock()
-
-    text = color + " - " + str(counter).rjust(3)
-    p.time.set_timer(p.USEREVENT, 1000)
-    font = p.font.SysFont('Century Gothic', 24)
-
-    run = True
-    while run:
-        for e in p.event.get():
-            if e.type == p.USEREVENT: 
-                counter -= 1
-                text = color + " - " + str(counter).rjust(3) if counter > 0 else "Time's up!"
-            if e.type == p.QUIT: 
-                run = False
-
-        screen.fill((255, 255, 255))
-        screen.blit(font.render(text, True, (0, 0, 0)), (32, 48))
-        p.display.flip()
-        clock.tick(60)
-
+'''
+Main Loop
+'''
 if __name__ == '__main__':
-    #if GUI.GUI() == True:
-    chess()
-        #t_chess = threading.Thread(target=chess)
-        #t_clock = threading.Thread(target=chessTimer, args=("White",10,))
-        #t_chess.start()
-        #t_chess.join()
-    #t_clock.start()
+    if GUI.GUI() == True: # if user sucessfully logs in
+        chess() # runs main loop
+
 
     
